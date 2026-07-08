@@ -1,0 +1,215 @@
+[
+  {
+    "id": "Q1",
+    "query": "Find AWS Architect",
+    "expectedCriteria": {
+      "skills": ["AWS", "Cloud Architecture"],
+      "designation": "Solution Architect"
+    }
+  },
+  {
+    "id": "Q2",
+    "query": "Find AI Engineer with PyTorch",
+    "expectedCriteria": {
+      "skills": ["Python", "PyTorch"]
+    }
+  },
+  {
+    "id": "Q3",
+    "query": "Find HVAC Engineer",
+    "expectedCriteria": {
+      "domains": ["HVAC Platform"]
+    }
+  },
+  {
+    "id": "Q4",
+    "query": "Find DevOps Engineer with Kubernetes",
+    "expectedCriteria": {
+      "skills": ["Kubernetes", "DevOps"]
+    }
+  },
+  {
+    "id": "Q5",
+    "query": "Find React Developer",
+    "expectedCriteria": {
+      "skills": ["React"]
+    }
+  },
+  {
+    "id": "Q6",
+    "query": "Find Embedded Engineer",
+    "expectedCriteria": {
+      "skills": ["C", "Microcontrollers"]
+    }
+  },
+  {
+    "id": "Q7",
+    "query": "Find Backend Engineer with MQTT",
+    "expectedCriteria": {
+      "skills": ["MQTT", "Node.js"]
+    }
+  },
+  {
+    "id": "Q8",
+    "query": "Find Cloud Engineer with Terraform",
+    "expectedCriteria": {
+      "skills": ["Terraform", "AWS"]
+    }
+  },
+  {
+    "id": "Q9",
+    "query": "Find Manufacturing Expert in Smart Factory",
+    "expectedCriteria": {
+      "domains": ["Smart Factory"]
+    }
+  },
+  {
+    "id": "Q10",
+    "query": "Find Smart Building Specialist",
+    "expectedCriteria": {
+      "domains": ["Smart Building"]
+    }
+  },
+  {
+    "id": "Q11",
+    "query": "Need QA Automation Engineer with Cypress",
+    "expectedCriteria": {
+      "skills": ["Cypress", "QA"]
+    }
+  },
+  {
+    "id": "Q12",
+    "query": "Engineering Manager with Agile Scrum",
+    "expectedCriteria": {
+      "designation": "Engineering Manager",
+      "skills": ["Agile / Scrum"]
+    }
+  },
+  {
+    "id": "Q13",
+    "query": "Looking for Go developer with Microservices experience",
+    "expectedCriteria": {
+      "skills": ["Go", "API Design"]
+    }
+  },
+  {
+    "id": "Q14",
+    "query": "IoT developer with OPC UA",
+    "expectedCriteria": {
+      "skills": ["OPC UA", "MQTT"]
+    }
+  },
+  {
+    "id": "Q15",
+    "query": "Data Scientist with machine learning specialization",
+    "expectedCriteria": {
+      "skills": ["Data Science", "Python"]
+    }
+  },
+  {
+    "id": "Q16",
+    "query": "Docker specialist with CI CD pipelines",
+    "expectedCriteria": {
+      "skills": ["Docker", "CI/CD Pipelines"]
+    }
+  },
+  {
+    "id": "Q17",
+    "query": "Senior Software Engineer with TypeScript",
+    "expectedCriteria": {
+      "skills": ["TypeScript"]
+    }
+  },
+  {
+    "id": "Q18",
+    "query": "Solution Architect with TOGAF certification",
+    "expectedCriteria": {
+      "designation": "Solution Architect",
+      "skills": ["TOGAF"]
+    }
+  },
+  {
+    "id": "Q19",
+    "query": "Predictive Maintenance modeler",
+    "expectedCriteria": {
+      "domains": ["Predictive Maintenance"]
+    }
+  },
+  {
+    "id": "Q20",
+    "query": "Healthcare Monitoring device integrator",
+    "expectedCriteria": {
+      "domains": ["Healthcare Monitoring"]
+    }
+  },
+  {
+    "id": "Q21",
+    "query": "Energy Management grid analytics developer",
+    "expectedCriteria": {
+      "domains": ["Energy Management"]
+    }
+  },
+  {
+    "id": "Q22",
+    "query": "Retail Analytics expert",
+    "expectedCriteria": {
+      "domains": ["Retail Analytics"]
+    }
+  },
+  {
+    "id": "Q23",
+    "query": "Smart Irrigation soil moisture specialist",
+    "expectedCriteria": {
+      "domains": ["Smart Irrigation"]
+    }
+  },
+  {
+    "id": "Q24",
+    "query": "Frontend UI component developer",
+    "expectedCriteria": {
+      "skills": ["HTML5 & CSS3", "React"]
+    }
+  },
+  {
+    "id": "Q25",
+    "query": "DevOps Engineer with Ansible automation",
+    "expectedCriteria": {
+      "skills": ["Ansible", "Kubernetes"]
+    }
+  },
+  {
+    "id": "Q26",
+    "query": "Java Backend Developer with Spring Boot",
+    "expectedCriteria": {
+      "skills": ["Java", "Spring Boot"]
+    }
+  },
+  {
+    "id": "Q27",
+    "query": "FastAPI and Python developer",
+    "expectedCriteria": {
+      "skills": ["FastAPI", "Python"]
+    }
+  },
+  {
+    "id": "Q28",
+    "query": "ChromaDB or vector database specialist",
+    "expectedCriteria": {
+      "skills": ["ChromaDB", "Python"]
+    }
+  },
+  {
+    "id": "Q29",
+    "query": "Kafka distributed streaming developer",
+    "expectedCriteria": {
+      "skills": ["Kafka", "API Design"]
+    }
+  },
+  {
+    "id": "Q30",
+    "query": "Secure building access controls software engineer",
+    "expectedCriteria": {
+      "skills": ["Cloud Security", "OAuth & JWT"]
+    }
+  }
+]

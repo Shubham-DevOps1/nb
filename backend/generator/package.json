@@ -1,0 +1,15 @@
+{
+  "name": "enterprise-data-generator",
+  "version": "1.0.0",
+  "description": "Synthetic Enterprise Data Generator for TalentIQ AI",
+  "main": "generateDataset.js",
+  "type": "commonjs",
+  "scripts": {
+    "generate": "node generateDataset.js"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "fs-extra": "^11.2.0",
+    "uuid": "^9.0.1"
+  }
+}

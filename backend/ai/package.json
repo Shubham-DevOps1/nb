@@ -1,0 +1,19 @@
+{
+  "name": "talentiq-ai-semantic-search",
+  "version": "1.0.0",
+  "description": "Semantic Search Engine for TalentIQ AI using local bge-base-en-v1.5 and ChromaDB",
+  "main": "api/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "ingest": "node ingestion/ingestKnowledgeCards.js",
+    "search": "node search/semanticSearch.js",
+    "benchmark": "node evaluation/evaluator.js",
+    "start": "node api/server.js"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.0.1",
+    "chromadb": "^1.9.2",
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0"
+  }
+}
