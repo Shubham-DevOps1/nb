@@ -3,23 +3,33 @@ const config = require('../config/embeddingConfig');
 const logger = require('../utils/logger');
 
 let extractorInstance = null;
+let loadingPromise = null;
 
 /**
  * Initializes and returns the feature extraction pipeline instance.
  * Automatically caches the model files locally.
+ * Concurrent callers share one in-flight load (via loadingPromise) instead of
+ * each starting their own pipeline() call, which caused simultaneous reads of
+ * the same ONNX model file to fail with a file-lock error on Windows.
  */
 async function getExtractor() {
   if (extractorInstance) return extractorInstance;
-  
+  if (loadingPromise) return loadingPromise;
+
   logger.info(`Loading embedding model '${config.MODEL_NAME}'...`);
-  try {
-    extractorInstance = await pipeline('feature-extraction', config.MODEL_NAME);
-    logger.success('Embedding model loaded successfully!');
-    return extractorInstance;
-  } catch (err) {
-    logger.error(`Failed to load embedding model: ${config.MODEL_NAME}`, err);
-    throw err;
-  }
+  loadingPromise = pipeline('feature-extraction', config.MODEL_NAME)
+    .then(extractor => {
+      extractorInstance = extractor;
+      logger.success('Embedding model loaded successfully!');
+      return extractorInstance;
+    })
+    .catch(err => {
+      logger.error(`Failed to load embedding model: ${config.MODEL_NAME}`, err);
+      loadingPromise = null;
+      throw err;
+    });
+
+  return loadingPromise;
 }
 
 /**

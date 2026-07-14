@@ -1,5 +1,6 @@
 const express = require('express');
 const searchRoutes = require('./searchRoutes');
+const resumeRoutes = require('./resumeRoutes');
 const logger = require('../utils/logger');
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Register routes
 app.use('/api', searchRoutes);
+app.use('/api', resumeRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

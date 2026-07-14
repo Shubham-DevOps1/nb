@@ -1,0 +1,8 @@
+{
+  "employeeId": "RESUME-cdce488f-a375-4d18-b48d-8f4af7535a76",
+  "name": "Unknown Candidate",
+  "resumeText": "Sample Backend Developer Resume John Doe Email: john.doe@email.com Phone: +91-9876543210 Location: Pune, India LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe Professional Summary Backend Developer with 4+ years of experience in designing and developing scalable REST APIs using Node.js, Express.js, AWS Lambda, Serverless Framework, MySQL, and MongoDB. Experienced in cloud-native applications, microservices, authentication, and CI/CD. Technical Skills Languages: JavaScript, TypeScript, SQL Backend: Node.js, Express.js Cloud: AWS Lambda, API Gateway, S3, Cognito, Bedrock, CloudWatch Databases: MySQL, MongoDB, DynamoDB DevOps: Docker, Git, GitHub Actions, Serverless Framework Professional Experience Backend Developer | ABC Technologies 2022 - PresentDeveloped REST APIs using Node.js and Express.Built serverless applications using AWS Lambda.Optimized SQL queries reducing API response times by 60%.Integrated JWT authentication and role-based authorization.Implemented CI/CD pipelines using GitHub Actions. Projects IoT Smart Agriculture Platform Built backend APIs for sensor monitoring, irrigation automation, and analytics. AI Career Guidance Chatbot Developed a RAG chatbot using AWS Bedrock Nova Pro, vector search, and web search integration. Education Bachelor of Engineering in Computer Science Certifications AWS Certified Developer (Optional) Node.js / REST API / Docker Certifications",
+  "sourceFile": "Sample_Backend_Developer_Resume.pdf",
+  "numPages": 1,
+  "uploadedAt": "2026-07-09T12:34:50.013Z"
+}
