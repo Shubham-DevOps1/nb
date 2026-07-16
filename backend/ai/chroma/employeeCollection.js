@@ -65,6 +65,24 @@ async function getCollectionCount(collection) {
 }
 
 /**
+ * Fetches all employees meeting a minimum experience threshold via a direct
+ * metadata filter (not vector similarity) - used for structured requirement
+ * matching where "does this skill exist" needs to be an exact check rather
+ * than a fuzzy semantic score.
+ */
+async function getEmployeesByMinExperience(collection, minExperience = 0) {
+  try {
+    const params = minExperience > 0
+      ? { where: { experience: { '$gte': minExperience } } }
+      : {};
+    return await collection.get(params);
+  } catch (err) {
+    logger.error(`Failed to fetch employees with experience >= ${minExperience}`, err);
+    throw err;
+  }
+}
+
+/**
  * Queries the collection using a vector and optional metadata filters.
  */
 async function queryCollection(collection, queryEmbedding, topK = 5, filter = null) {
@@ -91,5 +109,6 @@ module.exports = {
   resetCollection,
   upsertEmployeeBatch,
   getCollectionCount,
+  getEmployeesByMinExperience,
   queryCollection
 };

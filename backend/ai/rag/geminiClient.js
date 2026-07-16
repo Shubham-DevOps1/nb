@@ -66,13 +66,17 @@ async function getCandidateModels() {
  * Sends a prompt to Gemini, trying candidate models in preference order and
  * skipping any already known not to work for this key, until one succeeds.
  */
-async function generateAnswer(prompt) {
+async function generateAnswer(prompt, extraGenerationConfig = {}) {
   if (!config.API_KEY) {
     throw new Error('GEMINI_API_KEY is not set. Export it before calling the RAG endpoint.');
   }
 
   const candidates = config.MODEL_NAME ? [config.MODEL_NAME] : await getCandidateModels();
-  const generationConfig = { temperature: config.TEMPERATURE, maxOutputTokens: config.MAX_OUTPUT_TOKENS };
+  const generationConfig = {
+    temperature: config.TEMPERATURE,
+    maxOutputTokens: config.MAX_OUTPUT_TOKENS,
+    ...extraGenerationConfig
+  };
   const requestOptions = { timeout: config.REQUEST_TIMEOUT_MS };
 
   // Try the last known-working model first so steady-state calls don't re-probe every time.

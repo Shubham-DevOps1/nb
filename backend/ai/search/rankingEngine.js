@@ -20,7 +20,8 @@ function parseQueryKeywords(query) {
     }
     // Match word boundaries for short terms like Go, C, etc.
     if (skill.length <= 3) {
-      const regex = new RegExp(`\\b${sLower}\\b`, 'i');
+      const escaped = sLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escaped}\\b`, 'i');
       return regex.test(qLower);
     }
     return qLower.includes(sLower);

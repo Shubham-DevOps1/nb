@@ -1,0 +1,8 @@
+{
+  "employeeId": "RESUME-30847455-fd89-4156-82f0-d3ae58251837",
+  "name": "Jane Smith",
+  "resumeText": "Jane Smith - Senior Python Developer Email: jane.smith@example.com Phone: +1-555-0134 Professional Summary 7 years of experience building backend systems in Python, Django, and FastAPI. Deep expertise in PostgreSQL, Redis, AWS Lambda, and Kubernetes deployments. Skills Python, Django, FastAPI, PostgreSQL, Redis, AWS, Kubernetes, Docker, CI/CD Experience Senior Backend Engineer at Acme Corp (2020-2026) Led migration of monolith to microservices using Kubernetes and gRPC. Education B.Tech in Computer Science, Pune University",
+  "sourceFile": "jane_smith_resume.pdf",
+  "numPages": 1,
+  "uploadedAt": "2026-07-14T10:09:07.401Z"
+}

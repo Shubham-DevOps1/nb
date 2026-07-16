@@ -1,0 +1,45 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 658 >>
+stream
+BT /F1 12 Tf 50 750 Td 16 TL
+(Jane Smith - Senior Python Developer) Tj T*
+(Email: jane.smith@example.com Phone: +1-555-0134) Tj T*
+(Professional Summary) Tj T*
+(7 years of experience building backend systems in Python, Django, and FastAPI.) Tj T*
+(Deep expertise in PostgreSQL, Redis, AWS Lambda, and Kubernetes deployments.) Tj T*
+(Skills) Tj T*
+(Python, Django, FastAPI, PostgreSQL, Redis, AWS, Kubernetes, Docker, CI/CD) Tj T*
+(Experience) Tj T*
+(Senior Backend Engineer at Acme Corp \(2020-2026\)) Tj T*
+(Led migration of monolith to microservices using Kubernetes and gRPC.) Tj T*
+(Education) Tj T*
+(B.Tech in Computer Science, Pune University) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1020
+%%EOF

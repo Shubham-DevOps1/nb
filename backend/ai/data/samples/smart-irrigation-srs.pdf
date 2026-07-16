@@ -1,0 +1,396 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R] /Count 7 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1625 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(Software Requirements Specification \(SRS\)) Tj T*
+(Project: Smart Irrigation Management System) Tj T*
+() Tj T*
+(Document Version: 1.0) Tj T*
+(Prepared For: Green Farms Pvt. Ltd.) Tj T*
+(Prepared By: Softdel Systems Pvt. Ltd.) Tj T*
+(Date: 16 July 2026) Tj T*
+() Tj T*
+(1. Introduction) Tj T*
+(1.1 Purpose) Tj T*
+() Tj T*
+(This document defines the functional and non-functional requirements for the Smart Irrigation) Tj T*
+(Management System. The system will enable farmers and farm administrators to remotely monitor) Tj T*
+(farms, automate irrigation, manage crops, and generate reports using IoT sensor data.) Tj T*
+() Tj T*
+(1.2 Project Scope) Tj T*
+() Tj T*
+(The Smart Irrigation Management System aims to:) Tj T*
+() Tj T*
+(Monitor live sensor readings.) Tj T*
+(Automate irrigation based on soil moisture.) Tj T*
+(Reduce water consumption.) Tj T*
+(Improve crop yield.) Tj T*
+(Provide reports and analytics.) Tj T*
+(Enable remote farm management.) Tj T*
+(1.3 Intended Users) Tj T*
+(Farm Owners) Tj T*
+(Supervisors) Tj T*
+(Caretakers) Tj T*
+(System Administrators) Tj T*
+(2. Business Objective) Tj T*
+() Tj T*
+(The client currently operates irrigation manually, leading to:) Tj T*
+() Tj T*
+(Excessive water usage) Tj T*
+(Delayed irrigation) Tj T*
+(Crop damage) Tj T*
+(High operational cost) Tj T*
+() Tj T*
+(The proposed solution should:) Tj T*
+() Tj T*
+(Automate irrigation.) Tj T*
+(Reduce manual intervention.) Tj T*
+(Provide real-time farm monitoring.) Tj T*
+(Improve productivity.) Tj T*
+(Reduce water wastage.) Tj T*
+(3. Functional Requirements) Tj T*
+(Module 1 - Authentication) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1004 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(FR-1) Tj T*
+() Tj T*
+(The system shall allow users to log in using their email address and password.) Tj T*
+() Tj T*
+(FR-2) Tj T*
+() Tj T*
+(The system shall support password reset.) Tj T*
+() Tj T*
+(FR-3) Tj T*
+() Tj T*
+(The system shall support secure JWT authentication.) Tj T*
+() Tj T*
+(Module 2 - User Management) Tj T*
+(FR-4) Tj T*
+() Tj T*
+(The administrator shall be able to:) Tj T*
+() Tj T*
+(Create users) Tj T*
+(Edit users) Tj T*
+(Delete users) Tj T*
+(Assign roles) Tj T*
+(FR-5) Tj T*
+() Tj T*
+(Supported roles:) Tj T*
+() Tj T*
+(Admin) Tj T*
+(Owner) Tj T*
+(Supervisor) Tj T*
+(Caretaker) Tj T*
+(Module 3 - Farm Management) Tj T*
+(FR-6) Tj T*
+() Tj T*
+(Users shall be able to:) Tj T*
+() Tj T*
+(Add farms) Tj T*
+(Edit farms) Tj T*
+(Delete farms) Tj T*
+(View farm details) Tj T*
+() Tj T*
+(Each farm should contain:) Tj T*
+() Tj T*
+(Farm Name) Tj T*
+(Address) Tj T*
+(GPS Coordinates) Tj T*
+(Area) Tj T*
+(Crop Details) Tj T*
+(Module 4 - Sensor Management) Tj T*
+() Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 1269 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(The system shall support:) Tj T*
+() Tj T*
+(Soil Moisture Sensors) Tj T*
+(Temperature Sensors) Tj T*
+(Humidity Sensors) Tj T*
+(pH Sensors) Tj T*
+(EC Sensors) Tj T*
+(Dashboard shall display:) Tj T*
+(Current Moisture) Tj T*
+(Temperature) Tj T*
+(Humidity) Tj T*
+(Battery Level) Tj T*
+(Last Updated Time) Tj T*
+(Sensor Status) Tj T*
+(Module 5 - Irrigation Automation) Tj T*
+(Automatic Irrigation) Tj T*
+() Tj T*
+(The system shall automatically start irrigation when:) Tj T*
+() Tj T*
+(Current Moisture less than Lower Threshold) Tj T*
+() Tj T*
+(The system shall automatically stop irrigation when:) Tj T*
+() Tj T*
+(Current Moisture greater or equal to Upper Threshold) Tj T*
+() Tj T*
+(Users shall also be able to:) Tj T*
+() Tj T*
+(Start irrigation manually) Tj T*
+(Stop irrigation manually) Tj T*
+(Module 6 - Dashboard) Tj T*
+() Tj T*
+(The Owner Dashboard shall display:) Tj T*
+() Tj T*
+(Total Farms) Tj T*
+(Total Sensors) Tj T*
+(Active Sensors) Tj T*
+(Offline Sensors) Tj T*
+(Total Plants) Tj T*
+(Total Valves) Tj T*
+(Total Harvest in Kg) Tj T*
+(Total Harvest in Pieces) Tj T*
+(Pending Tasks) Tj T*
+(Delayed Tasks) Tj T*
+(Observation Count) Tj T*
+(Water Consumption) Tj T*
+(Irrigation Status) Tj T*
+(Module 7 - Crop Management) Tj T*
+() Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1011 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(Users shall be able to:) Tj T*
+() Tj T*
+(Add Crop) Tj T*
+(Edit Crop) Tj T*
+(Delete Crop) Tj T*
+(View Crop History) Tj T*
+() Tj T*
+(Each crop contains:) Tj T*
+() Tj T*
+(Crop Name) Tj T*
+(Variety) Tj T*
+(Planting Date) Tj T*
+(Harvest Date) Tj T*
+(Expected Yield) Tj T*
+(Module 8 - Yield Management) Tj T*
+() Tj T*
+(The system shall:) Tj T*
+() Tj T*
+(Calculate expected yield.) Tj T*
+(Calculate actual yield.) Tj T*
+(Show variance.) Tj T*
+(Display monthly yield trends.) Tj T*
+() Tj T*
+(Business Rule:) Tj T*
+() Tj T*
+(Negative variance should display as 0.) Tj T*
+(Module 9 - Harvest Management) Tj T*
+() Tj T*
+(Users shall record:) Tj T*
+() Tj T*
+(Harvest Date) Tj T*
+(Quantity) Tj T*
+(Unit) Tj T*
+() Tj T*
+(Supported Units:) Tj T*
+() Tj T*
+(Kilograms) Tj T*
+(Pieces) Tj T*
+() Tj T*
+(Dashboard shall display totals separately.) Tj T*
+() Tj T*
+(Module 10 - Task Management) Tj T*
+() Tj T*
+(Users shall:) Tj T*
+() Tj T*
+(Create Tasks) Tj T*
+(Update Tasks) Tj T*
+(Assign Tasks) Tj T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 1415 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(Complete Tasks) Tj T*
+() Tj T*
+(Tasks shall be sorted by:) Tj T*
+() Tj T*
+(Due Date instead of Created Date) Tj T*
+() Tj T*
+(Module 11 - Notifications) Tj T*
+() Tj T*
+(The system shall notify users when:) Tj T*
+() Tj T*
+(Sensor goes offline) Tj T*
+(Battery becomes low) Tj T*
+(Irrigation starts) Tj T*
+(Irrigation stops) Tj T*
+(Task is overdue) Tj T*
+() Tj T*
+(Notifications delivered via Mobile and Email.) Tj T*
+() Tj T*
+(Module 12 - Reports) Tj T*
+() Tj T*
+(The system shall generate:) Tj T*
+() Tj T*
+(Daily Report containing Irrigation Summary, Water Usage, Sensor Status) Tj T*
+() Tj T*
+(Weekly Report containing Crop Health, Water Consumption, Harvest Summary) Tj T*
+() Tj T*
+(Monthly Report containing Farm Performance, Yield Analysis, Sensor Uptime, Task Completion) Tj T*
+() Tj T*
+(Reports shall be exportable as PDF and Excel.) Tj T*
+() Tj T*
+(4. Non-Functional Requirements) Tj T*
+(Performance) Tj T*
+() Tj T*
+(Dashboard shall load within 3 seconds.) Tj T*
+(APIs shall respond within 2 seconds under normal load.) Tj T*
+() Tj T*
+(Availability) Tj T*
+() Tj T*
+(System uptime shall be 99.9 percent.) Tj T*
+() Tj T*
+(Security) Tj T*
+() Tj T*
+(JWT Authentication, HTTPS, Encrypted passwords, Role-based access control, Audit logging.) Tj T*
+() Tj T*
+(Scalability) Tj T*
+() Tj T*
+(The system shall support 10,000 farms, 100,000 sensors, 50,000 concurrent users.) Tj T*
+() Tj T*
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 2179 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(Reliability) Tj T*
+() Tj T*
+(Daily automatic backups. Recovery Time Objective less than 2 hours.) Tj T*
+() Tj T*
+(Browser Support) Tj T*
+() Tj T*
+(Chrome, Edge, Firefox, Safari.) Tj T*
+() Tj T*
+(5. User Roles) Tj T*
+() Tj T*
+(Admin has full system access.) Tj T*
+(Owner manages farms, users, reports.) Tj T*
+(Supervisor assigns tasks, monitors farms.) Tj T*
+(Caretaker views assigned farms, completes tasks.) Tj T*
+() Tj T*
+(6. Reports) Tj T*
+() Tj T*
+(Dashboard Report displays Active Farms, Total Sensors, Water Usage, Harvest, Tasks, Observation) Tj T*
+(Count.) Tj T*
+() Tj T*
+(Yield Report displays Expected Yield, Actual Yield, Variance, Monthly Trends.) Tj T*
+() Tj T*
+(Irrigation Report displays Irrigation Duration, Water Used, Pump Status, Valve Activity.) Tj T*
+() Tj T*
+(Sensor Health Report displays Online Sensors, Offline Sensors, Battery Status, Communication) Tj T*
+(Errors.) Tj T*
+() Tj T*
+(Task Report displays Pending Tasks, Completed Tasks, Delayed Tasks, Assigned Users.) Tj T*
+() Tj T*
+(7. Acceptance Criteria) Tj T*
+() Tj T*
+(The project shall be considered complete when users can securely log in, farms can be created) Tj T*
+(and managed, sensors display real-time data, automatic irrigation works based on configured) Tj T*
+(thresholds, manual irrigation controls function correctly, dashboard displays all required) Tj T*
+(metrics, observation count is shown on the Owner Dashboard, yield variance never displays a) Tj T*
+(negative value, tasks are sorted by Due Date, reports can be exported as PDF and Excel,) Tj T*
+(notifications are sent successfully, APIs meet the defined performance requirements, and the) Tj T*
+(system passes User Acceptance Testing with no critical defects.) Tj T*
+() Tj T*
+(8. Assumptions) Tj T*
+() Tj T*
+(Sensors transmit valid data at configured intervals. Internet connectivity is available at farm) Tj T*
+(locations. Users have appropriate permissions assigned. Third-party services such as email and) Tj T*
+(SMS are operational.) Tj T*
+() Tj T*
+(9. Future Enhancements) Tj T*
+() Tj T*
+(AI-based irrigation recommendations. Weather forecast integration. Pest and disease prediction.) Tj T*
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 17 0 R >>
+endobj
+17 0 obj
+<< /Length 197 >>
+stream
+BT /F1 9 Tf 40 760 Td 12 TL
+(Mobile application for Android and iOS. Voice assistant support. Multi-language interface.) Tj T*
+(Predictive yield analytics using machine learning.) Tj T*
+() Tj T*
+ET
+endstream
+endobj
+xref
+0 18
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000155 00000 n 
+0000000225 00000 n 
+0000000351 00000 n 
+0000002028 00000 n 
+0000002154 00000 n 
+0000003210 00000 n 
+0000003336 00000 n 
+0000004657 00000 n 
+0000004785 00000 n 
+0000005849 00000 n 
+0000005977 00000 n 
+0000007445 00000 n 
+0000007573 00000 n 
+0000009805 00000 n 
+0000009933 00000 n 
+trailer
+<< /Size 18 /Root 1 0 R >>
+startxref
+10182
+%%EOF
