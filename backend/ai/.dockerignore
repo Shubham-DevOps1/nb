@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.chroma-data
+data/employees
+data/uploads
+.env
+.git
+.claude

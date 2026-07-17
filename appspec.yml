@@ -1,0 +1,31 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /docker-compose.deploy.yml
+    destination: /home/ec2-user/talentiq
+  - source: /scripts
+    destination: /home/ec2-user/talentiq/scripts
+
+permissions:
+  - object: /home/ec2-user/talentiq/scripts
+    pattern: "**"
+    mode: 755
+
+hooks:
+  ApplicationStop:
+    - location: scripts/deploy/stop_app.sh
+      timeout: 60
+      runas: ec2-user
+  AfterInstall:
+    - location: scripts/deploy/login_ecr.sh
+      timeout: 60
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/deploy/start_app.sh
+      timeout: 180
+      runas: ec2-user
+  ValidateService:
+    - location: scripts/deploy/validate_service.sh
+      timeout: 60
+      runas: ec2-user

@@ -1,0 +1,5 @@
+# Generated at CI build time - never commit, see buildspec.yml
+docker-compose.deploy.yml
+
+# Local env files
+.env

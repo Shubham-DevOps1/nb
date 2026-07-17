@@ -104,6 +104,79 @@ async function generateAnswer(prompt, extraGenerationConfig = {}) {
   throw lastErr || new Error('No usable Gemini model found for this API key.');
 }
 
+/**
+ * Runs one turn of a tool-using chat: sends the message with the given
+ * history, executes any function calls the model makes via the provided
+ * executor map, feeds the results back, and returns the final natural-
+ * language reply plus the updated history.
+ *
+ * Reuses the same candidate-model fallback as generateAnswer, since function
+ * calling isn't universally supported the same way across every model a key
+ * can access.
+ */
+async function runChatTurn({ history = [], message, tools, executors, systemInstruction }) {
+  if (!config.API_KEY) {
+    throw new Error('GEMINI_API_KEY is not set. Export it before calling the chat endpoint.');
+  }
+
+  const candidates = config.MODEL_NAME ? [config.MODEL_NAME] : await getCandidateModels();
+  const generationConfig = { temperature: config.TEMPERATURE, maxOutputTokens: config.MAX_OUTPUT_TOKENS };
+  const requestOptions = { timeout: config.REQUEST_TIMEOUT_MS };
+
+  const orderedCandidates = workingModelName
+    ? [workingModelName, ...candidates.filter(m => m !== workingModelName)]
+    : candidates;
+
+  let lastErr = null;
+  for (const modelName of orderedCandidates) {
+    if (failedModels.has(modelName)) continue;
+
+    try {
+      const model = client().getGenerativeModel({ model: modelName, generationConfig, tools, systemInstruction }, requestOptions);
+      const chat = model.startChat({ history });
+
+      let result = await chat.sendMessage(message);
+      let calls = result.response.functionCalls();
+
+      // Models can request more than one tool call, and can even chain a
+      // second round of calls after seeing the first results - loop until it
+      // stops asking for tools, with a hard cap so a confused model can't
+      // spin forever.
+      let toolCallLog = [];
+      let rounds = 0;
+      while (calls && calls.length > 0 && rounds < 4) {
+        const responseParts = [];
+        for (const call of calls) {
+          const executor = executors[call.name];
+          const output = executor
+            ? await executor(call.args || {})
+            : { error: `Unknown tool: ${call.name}` };
+          toolCallLog.push({ name: call.name, args: call.args, output });
+          responseParts.push({ functionResponse: { name: call.name, response: output } });
+        }
+        result = await chat.sendMessage(responseParts);
+        calls = result.response.functionCalls();
+        rounds++;
+      }
+
+      workingModelName = modelName;
+      return {
+        text: result.response.text(),
+        history: await chat.getHistory(),
+        toolCalls: toolCallLog
+      };
+    } catch (err) {
+      logger.warn(`Model '${modelName}' failed in chat mode (${err.message.substring(0, 120)}), trying next candidate...`);
+      failedModels.add(modelName);
+      lastErr = err;
+    }
+  }
+
+  logger.error('All candidate Gemini models failed for this API key (chat mode)', lastErr);
+  throw lastErr || new Error('No usable Gemini model found for this API key.');
+}
+
 module.exports = {
-  generateAnswer
+  generateAnswer,
+  runChatTurn
 };

@@ -1,0 +1,150 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  TalentIQ AI - single EC2 instance running the docker-compose stack
+  (chroma, backend-ai, frontend) via CodeDeploy. Uses the account's default
+  VPC and a public subnet to avoid NAT Gateway costs - the instance reaches
+  the internet (for Gemini API calls and ECR pulls) directly via the
+  default VPC's Internet Gateway.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: Default VPC id (run `aws ec2 describe-vpcs --filters Name=is-default,Values=true` to find it).
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: A public subnet in the above VPC (must auto-assign public IPs, or use an Elastic IP).
+  InstanceType:
+    Type: String
+    Default: t3.small
+    AllowedValues: [t3.micro, t3.small, t3.medium]
+    Description: t3.small recommended - the embedding model needs more headroom than t3.micro's 1GB RAM comfortably offers alongside Chroma + the frontend.
+  KeyPairName:
+    Type: String
+    Default: ''
+    Description: Optional EC2 key pair for SSH access. Leave blank to rely on SSM Session Manager only (recommended - no open SSH port needed).
+  SshAllowedCidr:
+    Type: String
+    Default: 127.0.0.1/32
+    Description: CIDR allowed to SSH in, only used if KeyPairName is set. Defaults to a non-routable value (effectively "no SSH") when left at default.
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+    Description: Amazon Linux 2023 AMI, resolved via SSM at deploy time so this template doesn't pin a region-specific AMI ID.
+
+Conditions:
+  HasKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
+
+Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: CodeDeployS3Read
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:Get*, s3:List*]
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    aws:ResourceAccount: !Ref AWS::AccountId
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref InstanceRole]
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: TalentIQ EC2 instance - HTTP inbound, restricted SSH
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: Frontend (nginx)
+        - !If
+          - HasKeyPair
+          - IpProtocol: tcp
+            FromPort: 22
+            ToPort: 22
+            CidrIp: !Ref SshAllowedCidr
+          - !Ref AWS::NoValue
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: 0.0.0.0/0
+          Description: Outbound to Gemini API, ECR, CodeCommit/CodeDeploy, RDS
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref InstanceProfile
+      KeyName: !If [HasKeyPair, !Ref KeyPairName, !Ref AWS::NoValue]
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds: [!Ref InstanceSecurityGroup]
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp3
+            DeleteOnTermination: true
+      Tags:
+        - { Key: Name, Value: talentiq-app-server }
+        # CodeDeploy deployment groups target instances by tag - this must
+        # match the deployment group's Ec2TagFilters in pipeline-stack.yaml.
+        - { Key: App, Value: talentiq }
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -e
+          dnf update -y
+          dnf install -y docker ruby wget postgresql16
+
+          systemctl enable --now docker
+          usermod -aG docker ec2-user
+
+          # Docker Compose v2 plugin - Amazon Linux 2023's repos don't
+          # reliably carry docker-compose-plugin, so install the binary
+          # directly per Docker's documented Linux install method.
+          mkdir -p /usr/local/lib/docker/cli-plugins
+          curl -SL https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 \
+            -o /usr/local/lib/docker/cli-plugins/docker-compose
+          chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+          # CodeDeploy agent
+          cd /home/ec2-user
+          wget https://aws-codedeploy-${AWS::Region}.s3.${AWS::Region}.amazonaws.com/latest/install
+          chmod +x ./install
+          ./install auto
+          systemctl enable codedeploy-agent
+          systemctl start codedeploy-agent
+
+          mkdir -p /home/ec2-user/talentiq/scripts
+          chown -R ec2-user:ec2-user /home/ec2-user/talentiq
+
+          echo "NOTE: create /home/ec2-user/talentiq/.env with GEMINI_API_KEY" \
+               "before the first deployment - see start_app.sh." \
+               > /home/ec2-user/talentiq/README_FIRST.txt
+
+Outputs:
+  InstanceId:
+    Value: !Ref Instance
+  PublicIp:
+    Value: !GetAtt Instance.PublicIp
+  SecurityGroupId:
+    Value: !Ref InstanceSecurityGroup
+    Description: Pass this into rds-stack.yaml's AppSecurityGroupId parameter.

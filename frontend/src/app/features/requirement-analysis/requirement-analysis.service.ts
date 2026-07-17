@@ -32,7 +32,11 @@ export interface RequirementAnalysis {
   matches: RequirementMatch[];
 }
 
-const API_URL = 'http://localhost:3456/api/requirements/analyze';
+// Relative path - works unchanged behind the dev-server proxy (see
+// proxy.conf.json), the frontend container's nginx reverse proxy in
+// docker-compose, and same-origin ALB routing on ECS. A hardcoded
+// absolute URL would only ever work on localhost.
+const API_URL = '/api/requirements/analyze';
 
 @Injectable({ providedIn: 'root' })
 export class RequirementAnalysisService {
