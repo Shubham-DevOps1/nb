@@ -82,7 +82,20 @@ async function extractRequirements(documentText) {
   // output budget above the RAG-answer default (1024), since a multi-line
   // JSON array with per-requirement justifications is longer than a
   // conversational answer and was silently truncating on bigger documents.
-  const generationConfig = { responseMimeType: 'application/json', maxOutputTokens: 2048 };
+  //
+  // thinkingBudget: 0 disables the model's hidden reasoning tokens. On a
+  // longer/more complex document, a "thinking" model burned ~1,900 of the
+  // 2048-token budget on invisible reasoning before writing a single
+  // character of the actual JSON, so the visible output got cut off
+  // mid-string (finishReason: MAX_TOKENS) despite the raised ceiling above.
+  // This step doesn't need step-by-step reasoning - it's a grounded
+  // extraction against a fixed vocabulary - so trading that away for
+  // reliability is the right call here.
+  const generationConfig = {
+    responseMimeType: 'application/json',
+    maxOutputTokens: 2048,
+    thinkingConfig: { thinkingBudget: 0 }
+  };
 
   // Even in JSON mode, a rare malformed/truncated response is still possible -
   // one retry clears that without masking a persistently broken prompt/model.
