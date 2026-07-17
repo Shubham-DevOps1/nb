@@ -20,7 +20,7 @@ async function askAboutCandidates(req, res) {
   } catch (err) {
     logger.error(`RAG query failed for question: "${question}"`, err);
     return res.status(500).json({
-      error: 'adding New CComment Added Internal Server Error during RAG query.',
+      error: 'Added Internal Server Error during RAG query.',
       message: err.message
     });
   }
