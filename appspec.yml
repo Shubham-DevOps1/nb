@@ -27,5 +27,9 @@ hooks:
       runas: ec2-user
   ValidateService:
     - location: scripts/deploy/validate_service.sh
-      timeout: 60
+      # Must exceed the script's own internal retry budget (20 attempts x 5s
+      # = 100s) with headroom - a mismatch here (was 60s) killed the script
+      # before containers had time to become healthy, even though the
+      # deployment was otherwise on track to succeed.
+      timeout: 150
       runas: ec2-user
