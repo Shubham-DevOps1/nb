@@ -32,7 +32,7 @@ export interface RequirementAnalysis {
   matches: RequirementMatch[];
 }
 
-const API_URL = 'http://localhost:3456/api/requirements/analyze';
+const API_URL = 'http://localhost:3455/api/requirements/analyze';
 
 @Injectable({ providedIn: 'root' })
 export class RequirementAnalysisService {

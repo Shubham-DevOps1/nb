@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const searchRoutes = require('./searchRoutes');
 const resumeRoutes = require('./resumeRoutes');
 const requirementRoutes = require('./requirementRoutes');
@@ -6,6 +7,13 @@ const logger = require('../utils/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Enable CORS
+app.use(cors({
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 
 // Body parsing middleware
 app.use(express.json());
