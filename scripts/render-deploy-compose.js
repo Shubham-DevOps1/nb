@@ -26,7 +26,11 @@ services:
     image: chromadb/chroma:latest
     restart: unless-stopped
     volumes:
-      - chroma-data:/chroma/chroma
+      # /data is the image's real persist path (see docker-compose.yml for
+      # the full explanation) - a wrong path here silently wiped all
+      # ingested data on every redeploy, since Chroma was never actually
+      # writing to the mounted volume.
+      - chroma-data:/data
     networks:
       - talentiq-net
 

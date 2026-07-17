@@ -7,7 +7,13 @@ services:
     image: chromadb/chroma:latest
     restart: unless-stopped
     volumes:
-      - chroma-data:/chroma/chroma
+      # The image's actual persist path is /data (confirmed via its own
+      # startup log: "persist_path: /data") - NOT /chroma/chroma, which was
+      # this file's original (wrong) guess. Mounting the wrong path meant
+      # Chroma was writing to the container's ephemeral layer the whole
+      # time; every redeploy silently wiped all indexed data, since the
+      # actual persistent volume was never being touched at all.
+      - chroma-data:/data
     networks:
       - talentiq-net
 
