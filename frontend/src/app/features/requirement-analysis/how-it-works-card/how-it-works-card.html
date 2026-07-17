@@ -1,0 +1,11 @@
+<app-card>
+  <h3 class="title">How it works</h3>
+  <div class="steps">
+    @for (step of steps; track step.order) {
+      <div class="step">
+        <span class="step__badge">{{ step.order }}</span>
+        <p class="step__text">{{ step.text }}</p>
+      </div>
+    }
+  </div>
+</app-card>

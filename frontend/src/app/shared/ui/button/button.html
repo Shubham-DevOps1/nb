@@ -1,0 +1,6 @@
+<button class="btn" [class.btn--secondary]="variant() === 'secondary'" type="button">
+  @if (icon()) {
+    <app-icon [name]="icon()!" [size]="16" />
+  }
+  <ng-content />
+</button>

@@ -1,0 +1,39 @@
+<div class="brand">
+  <span class="brand-mark">
+    <app-icon name="badge-check" [size]="18" />
+  </span>
+  <span class="brand-name">TalentIQ <span class="brand-accent">AI</span></span>
+</div>
+
+<nav class="nav">
+  @for (section of navSections; track section.title) {
+    <div class="nav-section">
+      <p class="nav-section__title">{{ section.title }}</p>
+      @for (item of section.items; track item.label) {
+        <div class="nav-item" [class.nav-item--active]="item.active">
+          <app-icon [name]="item.icon" [size]="18" />
+          <span class="nav-item__label">{{ item.label }}</span>
+          @if (item.badge) {
+            <app-badge>{{ item.badge }}</app-badge>
+          }
+        </div>
+      }
+    </div>
+  }
+</nav>
+
+<!-- <div class="sidebar-footer">
+  <div class="nav-item">
+    <app-icon name="help" [size]="18" />
+    <span class="nav-item__label">Help &amp; Support</span>
+  </div>
+
+  <div class="profile-card">
+    <app-avatar [initials]="user.initials" />
+    <div class="profile-card__info">
+      <p class="profile-card__name">{{ user.name }}</p>
+      <p class="profile-card__role">{{ user.role }}</p>
+    </div>
+    <app-icon name="chevron-down" [size]="16" />
+  </div>
+</div> -->

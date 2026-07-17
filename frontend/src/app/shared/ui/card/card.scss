@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+:host.app-card--flush {
+  padding: 0;
+}
+
+:host.app-card--dashed {
+  background: var(--color-surface-muted);
+  border: 1.5px dashed var(--color-border-strong);
+}
