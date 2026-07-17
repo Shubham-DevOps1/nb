@@ -1,6 +1,6 @@
 ---
 name: verify
-description: How to run and manually test backend/ai's resume upload + RAG pipeline, employee search, and requirement-document staffing matcher locally
+description: How to run and manually test backend/ai's resume upload + RAG pipeline, employee search, requirement-document staffing matcher, and the chat assistant locally
 ---
 
 # Testing backend/ai locally
@@ -90,6 +90,21 @@ This one needs `GEMINI_API_KEY` (used to infer roles/skills/headcount from
 the document's functional requirements, not just parse an explicit list) and
 needs the `employees` collection actually populated (see below) or every
 requirement will show `matchedCount: 0`.
+
+Chat with the unified assistant (session-based multi-turn, routes between
+employee search / resume Q&A / requirement-doc analysis automatically) -
+either open `http://localhost:3456/chat.html` in a browser, or hit the API
+directly:
+```bash
+curl.exe -s -F "message=Who has AWS Lambda experience?" http://localhost:3456/api/chat
+# pass back the returned sessionId to continue the same conversation:
+curl.exe -s -F "sessionId=<id-from-response>" -F "message=Of those, who's available now?" http://localhost:3456/api/chat
+# attach a requirement doc instead of/alongside a message:
+curl.exe -s -F "document=@backend\ai\data\samples\smart-irrigation-srs.pdf;type=application/pdf" http://localhost:3456/api/chat
+```
+Session history is in-memory only (`chat/chatSessionStore.js`) - resets on
+server restart, no persistence. Needs `GEMINI_API_KEY` and the `employees`
+collection populated, same as above.
 
 ## Populating the `employees` collection
 

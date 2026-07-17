@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  TalentIQ AI - RDS PostgreSQL instance holding the relational dataset from
+  backend/generator/output/seed.sql (employees, projects, skills, etc.).
+  Not publicly accessible - reachable only from the EC2 app server's
+  security group. NOTE: nothing in backend/ai currently queries this
+  database; it's provisioned as a separate data store per explicit request,
+  not because the running app depends on it.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: At least 2 subnets in different AZs - RDS subnet groups require this even for a single-AZ instance.
+  AppSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The EC2 instance's security group (SecurityGroupId output from ec2-stack.yaml) - only this SG can reach Postgres.
+  DbInstanceClass:
+    Type: String
+    Default: db.t3.micro
+    AllowedValues: [db.t3.micro, db.t3.small, db.t4g.micro, db.t4g.small]
+  DbName:
+    Type: String
+    Default: talentiq
+  DbAllocatedStorageGb:
+    Type: Number
+    Default: 20
+    MinValue: 20
+    Description: gp3 minimum is 20GB - seed.sql itself is ~18MB of SQL text, actual table storage after indexing will be well under this.
+
+Resources:
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: TalentIQ RDS subnet group
+      SubnetIds: !Ref SubnetIds
+
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: TalentIQ RDS - Postgres inbound only from the app server
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref AppSecurityGroupId
+          Description: Postgres from the EC2 app server only
+
+  DbInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      Engine: postgres
+      EngineVersion: '16.14'
+      DBInstanceClass: !Ref DbInstanceClass
+      AllocatedStorage: !Ref DbAllocatedStorageGb
+      StorageType: gp3
+      DBName: !Ref DbName
+      MasterUsername: talentiq_admin
+      # RDS generates and stores the master password in Secrets Manager
+      # itself - no plaintext password ever appears in this template, a
+      # parameter, or a stack event.
+      ManageMasterUserPassword: true
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups: [!Ref DbSecurityGroup]
+      PubliclyAccessible: false
+      MultiAZ: false
+      BackupRetentionPeriod: 1
+      StorageEncrypted: true
+      DeletionProtection: false
+
+Outputs:
+  DbEndpoint:
+    Value: !GetAtt DbInstance.Endpoint.Address
+  DbPort:
+    Value: !GetAtt DbInstance.Endpoint.Port
+  MasterUserSecretArn:
+    Value: !GetAtt DbInstance.MasterUserSecret.SecretArn
+    Description: Fetch the generated password with `aws secretsmanager get-secret-value --secret-id <this-arn>`

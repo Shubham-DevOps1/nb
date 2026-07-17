@@ -1,0 +1,48 @@
+name: talentiq
+
+services:
+  chroma:
+    # Official Chroma image. Pin an exact version before production use -
+    # "latest" is fine for local/dev but not for reproducible deploys.
+    image: chromadb/chroma:latest
+    restart: unless-stopped
+    volumes:
+      - chroma-data:/chroma/chroma
+    networks:
+      - talentiq-net
+
+  backend-ai:
+    build:
+      context: .
+      dockerfile: backend/ai/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - chroma
+    environment:
+      CHROMA_URL: http://chroma:8000
+      PORT: 3456
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+    volumes:
+      - backend-data:/app/backend/ai/data
+    networks:
+      - talentiq-net
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend-ai
+    ports:
+      - "80:80"
+    networks:
+      - talentiq-net
+
+volumes:
+  chroma-data:
+  backend-data:
+
+networks:
+  talentiq-net:
+    driver: bridge

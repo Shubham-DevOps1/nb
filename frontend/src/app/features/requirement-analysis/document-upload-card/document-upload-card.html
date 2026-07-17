@@ -1,0 +1,23 @@
+<app-card>
+  <app-card variant="dashed" class="dropzone">
+    <div class="dropzone__icon">
+      <app-icon name="upload" [size]="26" />
+    </div>
+    <p class="dropzone__title">Drag &amp; drop your requirement document</p>
+    <p class="dropzone__subtitle">Supports PDF · up to 5MB</p>
+    <input #fileInput type="file" accept="application/pdf" hidden (change)="onFileSelected($event)" />
+    <app-button variant="primary" icon="file" (click)="fileInput.click()">Browse files</app-button>
+  </app-card>
+
+  @if (uploadedFile(); as file) {
+    <div class="uploaded-list">
+      <app-uploaded-file-item [file]="file" />
+
+      @if (isUploadComplete()) {
+        <app-button variant="primary" (click)="onSubmit()">
+          {{ analysisService.isLoading() ? 'Analyzing…' : 'Submit for Analysis' }}
+        </app-button>
+      }
+    </div>
+  }
+</app-card>

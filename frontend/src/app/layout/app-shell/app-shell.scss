@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  height: 100dvh;
+  width: 100%;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.main__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}

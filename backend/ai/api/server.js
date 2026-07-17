@@ -1,7 +1,9 @@
+const path = require('path');
 const express = require('express');
 const searchRoutes = require('./searchRoutes');
 const resumeRoutes = require('./resumeRoutes');
 const requirementRoutes = require('./requirementRoutes');
+const chatRoutes = require('./chatRoutes');
 const logger = require('../utils/logger');
 
 const app = express();
@@ -10,10 +12,14 @@ const PORT = process.env.PORT || 3000;
 // Body parsing middleware
 app.use(express.json());
 
+// Static chat UI
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // Register routes
 app.use('/api', searchRoutes);
 app.use('/api', resumeRoutes);
 app.use('/api', requirementRoutes);
+app.use('/api', chatRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

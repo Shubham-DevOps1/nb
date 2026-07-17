@@ -1,0 +1,56 @@
+<app-card class="panel">
+  @if (analysisService.isLoading()) {
+    <div class="state-centered">
+      <span class="spinner"></span>
+      <p class="state-text">Analyzing document…</p>
+    </div>
+  } @else if (analysisService.error(); as err) {
+    <div class="state-centered">
+      <app-empty-state icon="sparkles" title="Analysis failed" [subtitle]="err" />
+    </div>
+  } @else if (analysisService.result(); as result) {
+    <div class="results">
+      <div class="results__header">
+        <h3 class="results__title">{{ result.sourceFile }}</h3>
+        <span class="results__count">{{ result.requirementCount }} requirement(s) found</span>
+      </div>
+
+      @for (match of result.matches; track match.role) {
+        <div class="match-card">
+          <div class="match-card__header">
+            <h4 class="match-card__role">{{ match.role }}</h4>
+            <span class="match-card__badge" [class.match-card__badge--warn]="!match.sufficientResources">
+              {{ match.matchedCount }}/{{ match.count }} matched
+            </span>
+          </div>
+          <p class="match-card__meta">
+            {{ match.minExperience }}+ yrs
+            @if (match.domain) {
+              · {{ match.domain }}
+            }
+          </p>
+          <div class="match-card__skills">
+            @for (skill of match.skills; track skill) {
+              <span class="skill-chip">{{ skill }}</span>
+            }
+          </div>
+          @if (match.resources.length) {
+            <ul class="match-card__resources">
+              @for (res of match.resources; track res.employeeId) {
+                <li>{{ res.name }} — {{ res.designation }} · {{ res.experience }}y</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="state-centered">
+      <app-empty-state
+        icon="sparkles"
+        title="Analysis results will appear here"
+        subtitle="Upload a document to begin extraction"
+      />
+    </div>
+  }
+</app-card>

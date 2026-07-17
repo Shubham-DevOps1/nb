@@ -1,0 +1,13 @@
+<div class="file-icon">
+  <app-icon name="file" [size]="18" />
+</div>
+
+<div class="file-info">
+  <p class="file-info__name">{{ file().name }}</p>
+  <div class="file-info__meta">
+    <span class="file-info__meta-text">{{ file().sizeLabel }} · uploaded {{ file().uploadedLabel }}</span>
+    @if (file().progress < 100) {
+      <app-progress-bar class="file-info__progress" [percent]="file().progress" />
+    }
+  </div>
+</div>

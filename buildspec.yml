@@ -1,0 +1,47 @@
+version: 0.2
+
+# CodeBuild project env vars expected (set on the CodeBuild project, not here):
+#   ECR_BACKEND_REPO   - e.g. talentiq-backend-ai
+#   ECR_FRONTEND_REPO  - e.g. talentiq-frontend
+# AWS_DEFAULT_REGION is provided automatically by CodeBuild.
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to ECR..."
+      - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+      - IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}"
+      - echo "Image tag will be $IMAGE_TAG"
+
+  build:
+    commands:
+      - echo "Building backend-ai image..."
+      # Context is the repo root, not ./backend/ai - rankingEngine.js and
+      # requirementExtractor.js require files from backend/generator/master/
+      # via a relative path outside backend/ai, so both dirs must be in the
+      # build context. See the note at the top of backend/ai/Dockerfile.
+      - docker build -f backend/ai/Dockerfile -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:$IMAGE_TAG" -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:latest" .
+      - echo "Building frontend image..."
+      - docker build -t "$ECR_REGISTRY/$ECR_FRONTEND_REPO:$IMAGE_TAG" -t "$ECR_REGISTRY/$ECR_FRONTEND_REPO:latest" ./frontend
+
+  post_build:
+    commands:
+      - echo "Pushing images to ECR..."
+      - docker push "$ECR_REGISTRY/$ECR_BACKEND_REPO:$IMAGE_TAG"
+      - docker push "$ECR_REGISTRY/$ECR_BACKEND_REPO:latest"
+      - docker push "$ECR_REGISTRY/$ECR_FRONTEND_REPO:$IMAGE_TAG"
+      - docker push "$ECR_REGISTRY/$ECR_FRONTEND_REPO:latest"
+      # Bake the resolved registry/tag into a deploy-time compose file so the
+      # EC2 instance pulls these exact pre-built images instead of rebuilding
+      # from source (source code isn't even shipped to the instance).
+      - echo "Writing deploy-time docker-compose.yml..."
+      - node scripts/render-deploy-compose.js "$ECR_REGISTRY" "$ECR_BACKEND_REPO" "$ECR_FRONTEND_REPO" "$IMAGE_TAG"
+
+artifacts:
+  files:
+    - docker-compose.deploy.yml
+    - appspec.yml
+    - scripts/**/*
+  discard-paths: no
