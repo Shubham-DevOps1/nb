@@ -1,0 +1,21 @@
+# Used when building backend/ai's image from the repo root context
+# (docker build -f backend/ai/Dockerfile .) - frontend has its own
+# frontend/.dockerignore for its own build context.
+
+**/node_modules
+.git
+.claude
+presentation
+infrastructure
+frontend
+.env
+
+# backend/ai runtime-written data - never bake into the image
+backend/ai/.chroma-data
+backend/ai/data/employees
+backend/ai/data/uploads
+
+# backend/generator: only master/ (skills/domains/certifications taxonomy)
+# is actually required by backend/ai's code - output/ is ~50MB of generated
+# seed data irrelevant to this image and only bloats the build context.
+backend/generator/output

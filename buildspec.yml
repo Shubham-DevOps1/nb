@@ -18,7 +18,11 @@ phases:
   build:
     commands:
       - echo "Building backend-ai image..."
-      - docker build -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:$IMAGE_TAG" -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:latest" ./backend/ai
+      # Context is the repo root, not ./backend/ai - rankingEngine.js and
+      # requirementExtractor.js require files from backend/generator/master/
+      # via a relative path outside backend/ai, so both dirs must be in the
+      # build context. See the note at the top of backend/ai/Dockerfile.
+      - docker build -f backend/ai/Dockerfile -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:$IMAGE_TAG" -t "$ECR_REGISTRY/$ECR_BACKEND_REPO:latest" .
       - echo "Building frontend image..."
       - docker build -t "$ECR_REGISTRY/$ECR_FRONTEND_REPO:$IMAGE_TAG" -t "$ECR_REGISTRY/$ECR_FRONTEND_REPO:latest" ./frontend
 

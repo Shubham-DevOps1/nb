@@ -1,15 +1,25 @@
 # TalentIQ AI backend service - Node/Express API, local BGE embeddings,
 # Gemini RAG. Talks to a separate ChromaDB container over CHROMA_URL - it
 # does not bundle Chroma itself.
+#
+# IMPORTANT: build context must be the REPO ROOT, not backend/ai - e.g.
+#   docker build -f backend/ai/Dockerfile .
+# rankingEngine.js and requirementExtractor.js reach outside backend/ai via
+# require('../../generator/master/...') into backend/generator/master/ (the
+# skills/domains/certifications taxonomy). Mirroring the real repo layout
+# inside the image (backend/ai/ and backend/generator/master/ as siblings)
+# lets those relative requires resolve unchanged - a backend/ai-only build
+# context was tried first and crash-looped on MODULE_NOT_FOUND.
 FROM node:20-slim
 
-WORKDIR /app
+WORKDIR /app/backend/ai
 
 # Install dependencies first so this layer is cached across code-only changes.
-COPY package.json package-lock.json ./
+COPY backend/ai/package.json backend/ai/package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY . .
+COPY backend/ai/ ./
+COPY backend/generator/master/ /app/backend/generator/master/
 
 # data/ holds runtime-written employee/resume records - mount a volume here
 # in docker-compose/ECS so it survives container restarts and redeploys.

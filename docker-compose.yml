@@ -13,7 +13,8 @@ services:
 
   backend-ai:
     build:
-      context: ./backend/ai
+      context: .
+      dockerfile: backend/ai/Dockerfile
     restart: unless-stopped
     depends_on:
       - chroma
@@ -23,7 +24,7 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       GEMINI_MODEL: ${GEMINI_MODEL:-}
     volumes:
-      - backend-data:/app/data
+      - backend-data:/app/backend/ai/data
     networks:
       - talentiq-net
 
