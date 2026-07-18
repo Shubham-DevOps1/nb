@@ -12,5 +12,20 @@ export const routes: Routes = [
       import('./features/requirement-analysis/requirement-analysis-page/requirement-analysis-page').then(
         (m) => m.RequirementAnalysisPage,
       ),
+    data: {
+      title: 'Client Requirement Analysis',
+      subtitle: 'Upload a client brief and let AI extract skills, scope, and confidence',
+    },
+  },
+  {
+    path: 'recommendations',
+    loadComponent: () =>
+      import('./features/ai-recommendations/ai-recommendations-page/ai-recommendations-page').then(
+        (m) => m.AiRecommendationsPage,
+      ),
+    data: {
+      title: 'AI Recommendations',
+      subtitle: 'Semantic matches ranked by fit, availability, and past performance',
+    },
   },
 ];

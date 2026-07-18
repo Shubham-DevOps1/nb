@@ -2,6 +2,12 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
+export interface ScoreBreakdown {
+  skillFit: number;
+  availabilityFit: number;
+  deliveryTrackRecord: number;
+}
+
 export interface MatchedResource {
   employeeId: string;
   name: string;
@@ -10,8 +16,11 @@ export interface MatchedResource {
   location: string;
   availability: string;
   experience: number;
+  performanceRating: number;
   matchedSkills: string[];
   domainMatch: boolean;
+  matchScore: number;
+  scoreBreakdown: ScoreBreakdown;
 }
 
 export interface RequirementMatch {

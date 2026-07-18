@@ -17,6 +17,8 @@ import {
   LucideCloudUpload,
   LucideFile,
   LucideBadgeCheck,
+  LucideCircleCheck,
+  LucideCircleAlert,
 } from '@lucide/angular';
 
 export type IconName =
@@ -36,7 +38,9 @@ export type IconName =
   | 'plus'
   | 'upload'
   | 'file'
-  | 'badge-check';
+  | 'badge-check'
+  | 'circle-check'
+  | 'circle-alert';
 
 @Component({
   selector: 'app-icon',
@@ -58,6 +62,8 @@ export type IconName =
     LucideCloudUpload,
     LucideFile,
     LucideBadgeCheck,
+    LucideCircleCheck,
+    LucideCircleAlert,
   ],
   templateUrl: './icon.html',
   styleUrl: './icon.scss',

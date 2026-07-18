@@ -1,0 +1,18 @@
+@if (matches().length === 0) {
+  <div class="empty-wrap">
+    <app-empty-state
+      icon="sparkles"
+      title="No recommendations yet"
+      subtitle="Analyze a client requirement document from Requirement Analysis first - matches will appear here."
+    />
+  </div>
+} @else {
+  <div class="layout">
+    <app-requirement-list-panel
+      [matches]="matches()"
+      [selectedIndex]="selectedIndex()"
+      (select)="onSelect($event)"
+    />
+    <app-candidate-match-panel [match]="selectedMatch()" />
+  </div>
+}

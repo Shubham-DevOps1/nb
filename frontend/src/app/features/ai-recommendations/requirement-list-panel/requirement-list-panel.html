@@ -1,0 +1,36 @@
+<div class="panel">
+  <p class="panel__title">Open Requirements</p>
+
+  <div class="list">
+    @for (match of matches(); track match.role; let i = $index) {
+      <button
+        type="button"
+        class="req-card"
+        [class.req-card--active]="i === selectedIndex()"
+        (click)="select.emit(i)"
+      >
+        <div class="req-card__top">
+          @if (match.domain) {
+            <span class="req-card__domain">{{ match.domain }}</span>
+          }
+          <span class="req-card__status" [class.req-card__status--warn]="!match.sufficientResources">
+            <app-icon [name]="match.sufficientResources ? 'circle-check' : 'circle-alert'" [size]="13" />
+            {{ match.matchedCount }}/{{ match.count }} matched
+          </span>
+        </div>
+
+        <h3 class="req-card__role">{{ match.role }}</h3>
+        <p class="req-card__meta">{{ match.minExperience }}+ yrs</p>
+
+        <div class="req-card__skills">
+          @for (skill of match.skills.slice(0, 3); track skill) {
+            <span class="skill-chip">{{ skill }}</span>
+          }
+          @if (match.skills.length > 3) {
+            <span class="skill-chip skill-chip--muted">+{{ match.skills.length - 3 }}</span>
+          }
+        </div>
+      </button>
+    }
+  </div>
+</div>

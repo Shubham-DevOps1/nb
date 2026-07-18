@@ -1,0 +1,81 @@
+@if (match(); as m) {
+  <div class="panel">
+    <div class="banner" [class.banner--warn]="!m.sufficientResources">
+      <span class="banner__icon">
+        <app-icon name="sparkles" [size]="18" />
+      </span>
+      <div class="banner__body">
+        <p class="banner__title">AI matched {{ m.matchedCount }} candidate(s) for {{ m.role }}</p>
+        <p class="banner__subtitle">{{ m.justification }}</p>
+        <p class="banner__status">
+          <app-icon [name]="m.sufficientResources ? 'circle-check' : 'circle-alert'" [size]="14" />
+          {{ m.sufficientResources ? 'Sufficient resources available' : 'Resource shortfall - need ' + m.count + ', have ' + m.matchedCount }}
+        </p>
+      </div>
+    </div>
+
+    <div class="candidates">
+      @for (resource of m.resources; track resource.employeeId) {
+        <div class="candidate-card">
+          <div class="candidate-card__head">
+            <div class="candidate-card__identity">
+              <span class="avatar">{{ initials(resource.name) }}</span>
+              <div>
+                <div class="candidate-card__name-row">
+                  <h4 class="candidate-card__name">{{ resource.name }}</h4>
+                  <span
+                    class="status-pill"
+                    [class.status-pill--success]="availabilityTone(resource.availability) === 'success'"
+                    [class.status-pill--warn]="availabilityTone(resource.availability) === 'warn'"
+                  >
+                    {{ resource.availability }}
+                  </span>
+                </div>
+                <p class="candidate-card__meta">
+                  {{ resource.designation }} · {{ resource.location }} · {{ resource.experience }}y exp
+                </p>
+              </div>
+            </div>
+
+            <div class="candidate-card__score">
+              <span class="score-value">{{ resource.matchScore }}%</span>
+              <span class="score-label">Match</span>
+            </div>
+            <app-button variant="secondary">Shortlist</app-button>
+          </div>
+
+          <div class="candidate-card__skills">
+            @for (skill of resource.matchedSkills; track skill) {
+              <span class="skill-chip">{{ skill }}</span>
+            }
+          </div>
+
+          <div class="breakdown">
+            <div class="breakdown__row">
+              <span class="breakdown__label">Skill fit</span>
+              <app-progress-bar [percent]="resource.scoreBreakdown.skillFit" />
+              <span class="breakdown__value">{{ resource.scoreBreakdown.skillFit }}%</span>
+            </div>
+            <div class="breakdown__row">
+              <span class="breakdown__label">Availability fit</span>
+              <app-progress-bar [percent]="resource.scoreBreakdown.availabilityFit" />
+              <span class="breakdown__value">{{ resource.scoreBreakdown.availabilityFit }}%</span>
+            </div>
+            <div class="breakdown__row">
+              <span class="breakdown__label">Delivery track record</span>
+              <app-progress-bar [percent]="resource.scoreBreakdown.deliveryTrackRecord" />
+              <span class="breakdown__value">{{ resource.scoreBreakdown.deliveryTrackRecord }}%</span>
+            </div>
+          </div>
+
+          <p class="candidate-card__note">
+            <app-icon name="circle-check" [size]="13" />
+            {{ matchNote(resource, m) }}
+          </p>
+        </div>
+      } @empty {
+        <p class="no-candidates">No employees matched this requirement's skills at the required experience level.</p>
+      }
+    </div>
+  </div>
+}

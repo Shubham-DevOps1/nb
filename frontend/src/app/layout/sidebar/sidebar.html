@@ -10,13 +10,23 @@
     <div class="nav-section">
       <p class="nav-section__title">{{ section.title }}</p>
       @for (item of section.items; track item.label) {
-        <div class="nav-item" [class.nav-item--active]="item.active">
-          <app-icon [name]="item.icon" [size]="18" />
-          <span class="nav-item__label">{{ item.label }}</span>
-          @if (item.badge) {
-            <app-badge>{{ item.badge }}</app-badge>
-          }
-        </div>
+        @if (item.route) {
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="nav-item--active">
+            <app-icon [name]="item.icon" [size]="18" />
+            <span class="nav-item__label">{{ item.label }}</span>
+            @if (item.badge) {
+              <app-badge>{{ item.badge }}</app-badge>
+            }
+          </a>
+        } @else {
+          <div class="nav-item nav-item--disabled">
+            <app-icon [name]="item.icon" [size]="18" />
+            <span class="nav-item__label">{{ item.label }}</span>
+            @if (item.badge) {
+              <app-badge>{{ item.badge }}</app-badge>
+            }
+          </div>
+        }
       }
     </div>
   }

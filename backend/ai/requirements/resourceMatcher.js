@@ -3,6 +3,20 @@ const requirementConfig = require('../config/requirementConfig');
 const logger = require('../utils/logger');
 
 /**
+ * Same availability -> score convention used in rankingEngine.js's business
+ * ranking, reused here so "availability fit" means the same thing across
+ * both features rather than inventing a second scale.
+ */
+function availabilityScore(availability) {
+  const avail = (availability || '').toLowerCase();
+  if (avail === 'available') return 100;
+  if (avail.includes('2 weeks')) return 75;
+  if (avail.includes('1 month')) return 50;
+  if (avail === 'allocated') return 25;
+  return 50;
+}
+
+/**
  * Scores one employee's metadata against a requirement's skill/domain list.
  * Structured overlap counting rather than semantic similarity, since a
  * requirement asks "does this exact skill exist" not "is this related".
@@ -21,7 +35,25 @@ function scoreEmployee(metadata, requirement) {
     : [];
   const domainMatch = requirement.domain ? empDomains.includes(requirement.domain.toLowerCase()) : false;
 
-  return { matchedSkills, domainMatch };
+  // Genuine, derived scores - not fabricated. Skill fit is the fraction of
+  // the requirement's skills this person actually has; availability fit
+  // reuses the same scale as employee search; delivery track record is the
+  // employee's real recorded performance rating (0-5 scale), not invented.
+  const skillFitScore = Math.round((matchedSkills.length / requirement.skills.length) * 100);
+  const availabilityFitScore = availabilityScore(metadata.availability);
+  const performanceRating = Number(metadata.performanceRating) || 0;
+  const deliveryScore = Math.round(Math.min(100, (performanceRating / 5) * 100));
+  const matchScore = Math.round(skillFitScore * 0.5 + availabilityFitScore * 0.25 + deliveryScore * 0.25);
+
+  return {
+    matchedSkills,
+    domainMatch,
+    performanceRating,
+    skillFitScore,
+    availabilityFitScore,
+    deliveryScore,
+    matchScore
+  };
 }
 
 /**
@@ -39,7 +71,8 @@ async function matchRequirement(requirement) {
 
   for (let i = 0; i < ids.length; i++) {
     const metadata = metadatas[i];
-    const { matchedSkills, domainMatch } = scoreEmployee(metadata, requirement);
+    const { matchedSkills, domainMatch, performanceRating, skillFitScore, availabilityFitScore, deliveryScore, matchScore } =
+      scoreEmployee(metadata, requirement);
 
     if (matchedSkills.length === 0) continue;
 
@@ -51,21 +84,21 @@ async function matchRequirement(requirement) {
       location: metadata.location || 'Unknown',
       availability: metadata.availability || 'Unknown',
       experience: Number(metadata.experience) || 0,
+      performanceRating,
       matchedSkills,
-      domainMatch
+      domainMatch,
+      matchScore,
+      scoreBreakdown: {
+        skillFit: skillFitScore,
+        availabilityFit: availabilityFitScore,
+        deliveryTrackRecord: deliveryScore
+      }
     });
   }
 
-  // Rank by: more matched skills first, then domain match, then experience.
-  candidates.sort((a, b) => {
-    if (b.matchedSkills.length !== a.matchedSkills.length) {
-      return b.matchedSkills.length - a.matchedSkills.length;
-    }
-    if (b.domainMatch !== a.domainMatch) {
-      return b.domainMatch ? 1 : -1;
-    }
-    return b.experience - a.experience;
-  });
+  // Rank by the same weighted score shown to the user, not a separate
+  // internal order - what you see is what decided the ranking.
+  candidates.sort((a, b) => b.matchScore - a.matchScore);
 
   const matchedCount = candidates.length;
   const resources = candidates.slice(0, requirementConfig.MAX_RESOURCES_PER_REQUIREMENT);
