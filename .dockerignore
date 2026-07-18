@@ -15,7 +15,13 @@ backend/ai/.chroma-data
 backend/ai/data/employees
 backend/ai/data/uploads
 
-# backend/generator: only master/ (skills/domains/certifications taxonomy)
-# is actually required by backend/ai's code - output/ is ~50MB of generated
-# seed data irrelevant to this image and only bloats the build context.
-backend/generator/output
+# backend/generator/output: employees.json and knowledgeCards.json are
+# required at runtime by backend/ai/ingestion (re-ingestion is a real,
+# recurring operation, not a one-off) - only the SQL seed files and the
+# JSON sources nothing reads (resumes/projects/managerReviews) are excluded.
+backend/generator/output/seed.sql
+backend/generator/output/employees.sql
+backend/generator/output/projects.sql
+backend/generator/output/resumes.json
+backend/generator/output/projects.json
+backend/generator/output/managerReviews.json
