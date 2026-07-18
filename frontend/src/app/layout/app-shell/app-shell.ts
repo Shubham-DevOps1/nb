@@ -5,10 +5,11 @@ import { filter, map, startWith } from 'rxjs';
 import { Sidebar } from '../sidebar/sidebar';
 import { TopBar } from '../top-bar/top-bar';
 import { AiAssistantFab } from '../ai-assistant-fab/ai-assistant-fab';
+import { ChatPanel } from '../chat-panel/chat-panel';
 
 @Component({
   selector: 'app-app-shell',
-  imports: [RouterOutlet, Sidebar, TopBar, AiAssistantFab],
+  imports: [RouterOutlet, Sidebar, TopBar, AiAssistantFab, ChatPanel],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
 })

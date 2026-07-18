@@ -21,6 +21,9 @@ import {
   LucideCircleAlert,
   LucideClock,
   LucideAward,
+  LucideX,
+  LucidePaperclip,
+  LucideSend,
 } from '@lucide/angular';
 
 export type IconName =
@@ -44,7 +47,10 @@ export type IconName =
   | 'circle-check'
   | 'circle-alert'
   | 'clock'
-  | 'award';
+  | 'award'
+  | 'x'
+  | 'paperclip'
+  | 'send';
 
 @Component({
   selector: 'app-icon',
@@ -70,6 +76,9 @@ export type IconName =
     LucideCircleAlert,
     LucideClock,
     LucideAward,
+    LucideX,
+    LucidePaperclip,
+    LucideSend,
   ],
   templateUrl: './icon.html',
   styleUrl: './icon.scss',

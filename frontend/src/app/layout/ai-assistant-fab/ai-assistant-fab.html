@@ -1,3 +1,8 @@
-<button class="fab" type="button" aria-label="Open AI assistant">
-  <app-icon name="sparkles" [size]="22" />
+<button
+  class="fab"
+  type="button"
+  [attr.aria-label]="chatService.isOpen() ? 'Close AI assistant' : 'Open AI assistant'"
+  (click)="chatService.toggle()"
+>
+  <app-icon [name]="chatService.isOpen() ? 'x' : 'sparkles'" [size]="22" />
 </button>

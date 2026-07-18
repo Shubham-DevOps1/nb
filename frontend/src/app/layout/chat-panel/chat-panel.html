@@ -1,0 +1,101 @@
+@if (chatService.isOpen()) {
+  <div class="panel">
+    <div class="panel__header">
+      <div class="panel__title-group">
+        <app-icon name="sparkles" [size]="16" />
+        <span class="panel__title">TalentIQ Assistant</span>
+      </div>
+      <button class="panel__close" type="button" aria-label="Close" (click)="chatService.close()">
+        <app-icon name="x" [size]="16" />
+      </button>
+    </div>
+
+    <div class="panel__messages">
+      @if (chatService.messages().length === 0) {
+        <p class="panel__hint">
+          Ask about your workforce ("who has AWS experience?"), your uploaded resumes, or attach a client
+          requirement document for a staffing breakdown.
+        </p>
+      }
+
+      @for (msg of chatService.messages(); track $index) {
+        <div class="msg" [class.msg--user]="msg.role === 'user'" [class.msg--error]="msg.role === 'error'">
+          <p class="msg__text">{{ msg.text }}</p>
+
+          @if (msg.toolUsed) {
+            <span class="msg__tool">{{ msg.toolUsed }}</span>
+          }
+
+          @if (isSearchResults(msg.data)) {
+            <div class="cards">
+              @for (r of msg.data.results; track r.employeeId) {
+                <div class="mini-card">
+                  <span class="mini-card__name">{{ r.name }} — {{ r.businessScore }}%</span>
+                  <span class="mini-card__meta">{{ r.designation }} · {{ r.department }} · {{ r.availability }}</span>
+                </div>
+              }
+            </div>
+          }
+
+          @if (isResumeCandidates(msg.data)) {
+            <div class="cards">
+              @for (c of msg.data.candidates; track c.employeeId) {
+                <div class="mini-card">
+                  <span class="mini-card__name">{{ c.name }} — {{ c.matchScore }}%</span>
+                  <span class="mini-card__meta">{{ c.matchedChunkCount }} matched excerpt(s)</span>
+                </div>
+              }
+            </div>
+          }
+
+          @if (isRequirementMatches(msg.data)) {
+            <div class="cards">
+              @for (m of msg.data.matches; track m.role) {
+                <div class="mini-card">
+                  <span class="mini-card__name">{{ m.role }}</span>
+                  <span class="mini-card__meta">
+                    {{ m.matchedCount }}/{{ m.count }} matched
+                    {{ m.sufficientResources ? '✓' : '⚠' }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (chatService.isLoading()) {
+        <p class="panel__pending">Thinking…</p>
+      }
+    </div>
+
+    <form class="composer" (submit)="$event.preventDefault(); submit()">
+      @if (pendingFileName(); as fileName) {
+        <div class="composer__file">
+          <app-icon name="paperclip" [size]="12" />
+          <span>{{ fileName }}</span>
+          <button type="button" (click)="clearFile()" aria-label="Remove attachment">
+            <app-icon name="x" [size]="12" />
+          </button>
+        </div>
+      }
+      <div class="composer__row">
+        <label class="composer__attach" title="Attach a requirement PDF">
+          <app-icon name="paperclip" [size]="17" />
+          <input #fileInput type="file" accept="application/pdf" (change)="onFileSelected($event)" />
+        </label>
+        <input
+          class="composer__input"
+          type="text"
+          placeholder="Ask about talent, skills, resumes…"
+          [(ngModel)]="messageText"
+          name="message"
+          [disabled]="chatService.isLoading()"
+        />
+        <button class="composer__send" type="submit" [disabled]="chatService.isLoading()" aria-label="Send">
+          <app-icon name="send" [size]="16" />
+        </button>
+      </div>
+    </form>
+  </div>
+}
