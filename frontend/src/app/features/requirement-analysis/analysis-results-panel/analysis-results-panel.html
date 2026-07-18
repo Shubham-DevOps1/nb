@@ -16,32 +16,7 @@
       </div>
 
       @for (match of result.matches; track match.role) {
-        <div class="match-card">
-          <div class="match-card__header">
-            <h4 class="match-card__role">{{ match.role }}</h4>
-            <span class="match-card__badge" [class.match-card__badge--warn]="!match.sufficientResources">
-              {{ match.matchedCount }}/{{ match.count }} matched
-            </span>
-          </div>
-          <p class="match-card__meta">
-            {{ match.minExperience }}+ yrs
-            @if (match.domain) {
-              · {{ match.domain }}
-            }
-          </p>
-          <div class="match-card__skills">
-            @for (skill of match.skills; track skill) {
-              <span class="skill-chip">{{ skill }}</span>
-            }
-          </div>
-          @if (match.resources.length) {
-            <ul class="match-card__resources">
-              @for (res of match.resources; track res.employeeId) {
-                <li>{{ res.name }} — {{ res.designation }} · {{ res.experience }}y</li>
-              }
-            </ul>
-          }
-        </div>
+        <app-candidate-match-panel [match]="match" />
       }
     </div>
   } @else {

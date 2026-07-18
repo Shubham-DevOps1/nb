@@ -13,6 +13,8 @@
       [selectedIndex]="selectedIndex()"
       (select)="onSelect($event)"
     />
-    <app-candidate-match-panel [match]="selectedMatch()" />
+    <div class="right-col">
+      <app-candidate-match-panel [match]="selectedMatch()" />
+    </div>
   </div>
 }

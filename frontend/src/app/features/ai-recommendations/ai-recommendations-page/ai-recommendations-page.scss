@@ -7,8 +7,11 @@
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
   gap: var(--space-6);
-  height: 100%;
   align-items: start;
+}
+
+.right-col {
+  min-width: 0;
 }
 
 .empty-wrap {
