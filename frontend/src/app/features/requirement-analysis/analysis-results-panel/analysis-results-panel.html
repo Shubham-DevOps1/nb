@@ -15,9 +15,69 @@
         <span class="results__count">{{ result.requirementCount }} requirement(s) found</span>
       </div>
 
-      @for (match of result.matches; track match.role) {
-        <app-candidate-match-panel [match]="match" />
+      <div class="stats">
+        <div class="stat-card">
+          <app-icon name="clock" [size]="20" />
+          <span class="stat-card__value">{{ maxExperience() }}+ years</span>
+          <span class="stat-card__label">Required Experience</span>
+        </div>
+        <div class="stat-card">
+          <app-icon name="users" [size]="20" />
+          <span class="stat-card__value">{{ totalTeamSize() }} people</span>
+          <span class="stat-card__label">Estimated Team Size</span>
+        </div>
+        <div class="stat-card">
+          <app-icon name="award" [size]="20" />
+          <span class="stat-card__value">{{ combinedCertifications().length }} required</span>
+          <span class="stat-card__label">Certifications</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4 class="section__title">Extracted Skills &amp; Weighting</h4>
+        <p class="section__subtitle">Ranked by relevance to the requirement</p>
+
+        <div class="skill-rows">
+          @for (skill of combinedSkills(); track skill.name) {
+            <div class="skill-row">
+              <span class="skill-row__name">{{ skill.name }}</span>
+              <div class="skill-row__bar">
+                <div class="skill-row__fill" [style.width.%]="skill.relevance"></div>
+              </div>
+              <span
+                class="importance-pill"
+                [class.importance-pill--must]="skill.importance === 'Must have'"
+                [class.importance-pill--nice]="skill.importance === 'Nice to have'"
+              >
+                {{ skill.importance }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (combinedCertifications().length) {
+        <div class="section">
+          <h4 class="section__title">Required Certifications</h4>
+          <div class="cert-chips">
+            @for (cert of combinedCertifications(); track cert) {
+              <span class="cert-chip">
+                <app-icon name="award" [size]="13" />
+                {{ cert }}
+              </span>
+            }
+          </div>
+        </div>
       }
+
+      <a class="cta-banner" routerLink="/recommendations">
+        <app-icon name="sparkles" [size]="20" />
+        <div class="cta-banner__body">
+          <p class="cta-banner__title">{{ totalCandidates() }} matching candidate(s) found</p>
+          <p class="cta-banner__subtitle">Ready to review AI-ranked recommendations</p>
+        </div>
+        <span class="cta-banner__action">View Recommendations →</span>
+      </a>
     </div>
   } @else {
     <div class="state-centered">

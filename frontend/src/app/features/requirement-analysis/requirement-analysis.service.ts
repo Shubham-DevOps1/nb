@@ -23,9 +23,17 @@ export interface MatchedResource {
   scoreBreakdown: ScoreBreakdown;
 }
 
+export interface SkillDetail {
+  name: string;
+  importance: 'Must have' | 'Important' | 'Nice to have';
+  relevance: number;
+}
+
 export interface RequirementMatch {
   role: string;
   skills: string[];
+  skillDetails: SkillDetail[];
+  certifications: string[];
   domain: string | null;
   minExperience: number;
   count: number;

@@ -38,8 +38,19 @@ function buildExtractionPrompt(documentText) {
     `vocabulary above), a minimum years of experience, and a headcount estimate - base the headcount and ` +
     `experience level on the apparent scope/complexity of the related requirements (e.g. non-functional ` +
     `requirements like scale, security, or uptime targets imply more senior/more resources).\n\n` +
+    `For each skill, also judge how central it is to this specific role's requirements: "Must have" (the ` +
+    `role cannot function without it), "Important" (heavily used but not the sole blocker), or "Nice to have" ` +
+    `(mentioned or implied but peripheral) - plus a relevance score 0-100 reflecting how directly the document ` +
+    `emphasizes it (e.g. a skill tied to an explicit non-functional requirement like uptime/security scores ` +
+    `higher than one only implied by a generic module description).\n\n` +
+    `Also list any professional certifications the document explicitly requires or names (e.g. "AWS Certified ` +
+    `Solutions Architect", "PCI-DSS"). Only include ones actually mentioned or clearly implied by named ` +
+    `compliance/security standards in the text - leave the array empty rather than inventing plausible-sounding ` +
+    `certifications no document reference supports.\n\n` +
     `Respond with ONLY a raw JSON array (no markdown, no commentary), each element shaped exactly as:\n` +
-    `{"role": string, "skills": string[], "domain": string|null, "minExperience": number, "count": number, "justification": string}\n\n` +
+    `{"role": string, "skills": string[], "skillDetails": {"name": string, "importance": "Must have"|"Important"|"Nice to have", "relevance": number}[], "certifications": string[], "domain": string|null, "minExperience": number, "count": number, "justification": string}\n\n` +
+    `"skills" must list the same skill names as "skillDetails" (skills is kept for matching, skillDetails ` +
+    `carries the importance/relevance metadata for display) - do not let them diverge.\n\n` +
     `Project requirement document:\n"""${documentText}"""`;
 }
 
@@ -47,6 +58,31 @@ function buildExtractionPrompt(documentText) {
  * Validates and coerces one extracted requirement entry. Returns null if the
  * entry is unusable (missing the fields we need to actually match resources).
  */
+const VALID_IMPORTANCE = new Set(['Must have', 'Important', 'Nice to have']);
+
+/**
+ * Validates the model's per-skill importance/relevance metadata. Falls back
+ * to a neutral "Important"/70 default per skill if the model omitted
+ * skillDetails or produced a malformed/divergent entry, rather than
+ * dropping the skill or failing the whole extraction over decorative data.
+ */
+function sanitizeSkillDetails(rawDetails, skills) {
+  const byName = new Map();
+  if (Array.isArray(rawDetails)) {
+    for (const d of rawDetails) {
+      if (d && typeof d.name === 'string') byName.set(d.name.trim(), d);
+    }
+  }
+
+  return skills.map(name => {
+    const detail = byName.get(name);
+    const importance = detail && VALID_IMPORTANCE.has(detail.importance) ? detail.importance : 'Important';
+    const relevanceNum = Number(detail?.relevance);
+    const relevance = Number.isFinite(relevanceNum) ? Math.min(100, Math.max(0, Math.round(relevanceNum))) : 70;
+    return { name, importance, relevance };
+  });
+}
+
 function sanitizeRequirement(entry) {
   if (!entry || typeof entry !== 'object') return null;
   if (!entry.role || typeof entry.role !== 'string') return null;
@@ -55,9 +91,15 @@ function sanitizeRequirement(entry) {
   const skills = entry.skills.filter(s => typeof s === 'string' && s.trim() !== '');
   if (skills.length === 0) return null;
 
+  const certifications = Array.isArray(entry.certifications)
+    ? entry.certifications.filter(c => typeof c === 'string' && c.trim() !== '')
+    : [];
+
   return {
     role: entry.role.trim(),
     skills,
+    skillDetails: sanitizeSkillDetails(entry.skillDetails, skills),
+    certifications,
     domain: typeof entry.domain === 'string' && entry.domain.trim() !== '' ? entry.domain.trim() : null,
     minExperience: Number.isFinite(Number(entry.minExperience)) ? Math.max(0, Number(entry.minExperience)) : 0,
     count: Number.isFinite(Number(entry.count)) && Number(entry.count) > 0 ? Math.round(Number(entry.count)) : 1,
@@ -93,7 +135,9 @@ async function extractRequirements(documentText) {
   // reliability is the right call here.
   const generationConfig = {
     responseMimeType: 'application/json',
-    maxOutputTokens: 2048,
+    // Bumped from 2048 - skillDetails (importance/relevance per skill) and
+    // certifications roughly doubled the JSON size per requirement.
+    maxOutputTokens: 3072,
     thinkingConfig: { thinkingBudget: 0 }
   };
 
