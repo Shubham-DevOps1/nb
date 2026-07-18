@@ -1,0 +1,66 @@
+<div class="panel">
+  <button type="button" class="panel__toggle" (click)="toggle()">
+    <span class="panel__toggle-label">
+      <app-icon name="sliders-horizontal" [size]="15" />
+      Adjust matching weights
+    </span>
+    <app-icon name="chevron-down" [size]="15" [class.panel__chevron--open]="expanded()" />
+  </button>
+
+  @if (expanded()) {
+    <div class="panel__body">
+      <div class="slider-row">
+        <div class="slider-row__label">
+          <span>Skill fit</span>
+          <span class="slider-row__value">{{ normalized().skillFit }}%</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          [(ngModel)]="skillFit"
+          (input)="onWeightChange()"
+        />
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-row__label">
+          <span>Availability fit</span>
+          <span class="slider-row__value">{{ normalized().availabilityFit }}%</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          [(ngModel)]="availabilityFit"
+          (input)="onWeightChange()"
+        />
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-row__label">
+          <span>Delivery track record</span>
+          <span class="slider-row__value">{{ normalized().deliveryTrackRecord }}%</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          [(ngModel)]="deliveryTrackRecord"
+          (input)="onWeightChange()"
+        />
+      </div>
+
+      <div class="panel__footer">
+        @if (isRematching()) {
+          <span class="panel__status">Re-scoring candidates…</span>
+        } @else if (rematchError(); as err) {
+          <span class="panel__status panel__status--error">{{ err }}</span>
+        } @else {
+          <span class="panel__status">Weights apply to the full candidate pool, not just the top matches shown.</span>
+        }
+        <button type="button" class="panel__reset" (click)="reset()">Reset to default</button>
+      </div>
+    </div>
+  }
+</div>

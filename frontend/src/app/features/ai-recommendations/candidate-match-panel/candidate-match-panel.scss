@@ -181,6 +181,17 @@
   border: 1px solid var(--color-border);
 }
 
+.skill-chip--secondary {
+  background: transparent;
+  border-style: dashed;
+  color: var(--color-text-muted);
+}
+
+.skill-chip__level {
+  color: var(--color-text-placeholder);
+  font-weight: 600;
+}
+
 .breakdown {
   display: flex;
   flex-direction: column;

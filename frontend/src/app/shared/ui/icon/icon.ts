@@ -24,6 +24,7 @@ import {
   LucideX,
   LucidePaperclip,
   LucideSend,
+  LucideSlidersHorizontal,
 } from '@lucide/angular';
 
 export type IconName =
@@ -50,7 +51,8 @@ export type IconName =
   | 'award'
   | 'x'
   | 'paperclip'
-  | 'send';
+  | 'send'
+  | 'sliders-horizontal';
 
 @Component({
   selector: 'app-icon',
@@ -79,6 +81,7 @@ export type IconName =
     LucideX,
     LucidePaperclip,
     LucideSend,
+    LucideSlidersHorizontal,
   ],
   templateUrl: './icon.html',
   styleUrl: './icon.scss',

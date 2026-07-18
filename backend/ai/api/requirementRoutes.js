@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const router = express.Router();
-const { analyzeRequirementDocument } = require('./requirementController');
+const { analyzeRequirementDocument, rematchRequirements } = require('./requirementController');
 const requirementConfig = require('../config/requirementConfig');
 
 const upload = multer({
@@ -29,5 +29,6 @@ function handleUpload(req, res, next) {
 }
 
 router.post('/requirements/analyze', handleUpload, analyzeRequirementDocument);
+router.post('/requirements/rematch', rematchRequirements);
 
 module.exports = router;

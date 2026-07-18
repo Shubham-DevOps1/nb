@@ -9,6 +9,19 @@ const config = require('../config/chromaConfig');
 /**
  * Retries a promise-returning function with exponential backoff.
  */
+/**
+ * Chroma metadata only accepts flat string/number/bool values, so per-skill
+ * detail (level, years, primary-vs-secondary) can't be stored as nested
+ * objects. Encode each skill as "name|level|years", joined by ";" - parsed
+ * back out in resourceMatcher.js.
+ */
+function encodeSkillsDetailed(skills) {
+  if (!skills || skills.length === 0) return '';
+  return skills
+    .map(s => `${s.name}|${s.level || ''}|${s.yearsOfExperience || 0}`)
+    .join(';');
+}
+
 async function retryWithBackoff(operation, label, retries = 3, delay = 1000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -95,6 +108,8 @@ async function ingest() {
         performanceRating: empInfo ? Number(empInfo.performanceRating) : 0.0,
         domains: empInfo ? empInfo.domains.join(', ') : '',
         primarySkills: empInfo ? empInfo.primarySkills.map(s => s.name).join(', ') : '',
+        primarySkillsDetailed: empInfo ? encodeSkillsDetailed(empInfo.primarySkills) : '',
+        secondarySkillsDetailed: empInfo ? encodeSkillsDetailed(empInfo.secondarySkills) : '',
         manager: empInfo ? empInfo.managerName : 'Board of Directors'
       };
 

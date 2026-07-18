@@ -3,10 +3,11 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { RequirementAnalysisService } from '../../requirement-analysis/requirement-analysis.service';
 import { RequirementListPanel } from '../requirement-list-panel/requirement-list-panel';
 import { CandidateMatchPanel } from '../candidate-match-panel/candidate-match-panel';
+import { MatchWeightsPanel } from '../match-weights-panel/match-weights-panel';
 
 @Component({
   selector: 'app-ai-recommendations-page',
-  imports: [EmptyState, RequirementListPanel, CandidateMatchPanel],
+  imports: [EmptyState, RequirementListPanel, CandidateMatchPanel, MatchWeightsPanel],
   templateUrl: './ai-recommendations-page.html',
   styleUrl: './ai-recommendations-page.scss',
 })

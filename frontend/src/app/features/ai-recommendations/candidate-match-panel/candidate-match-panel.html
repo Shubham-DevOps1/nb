@@ -45,8 +45,15 @@
           </div>
 
           <div class="candidate-card__skills">
-            @for (skill of resource.matchedSkills; track skill) {
-              <span class="skill-chip">{{ skill }}</span>
+            @for (detail of resource.matchedSkillDetails; track detail.name) {
+              @if (detail.matched) {
+                <span class="skill-chip" [class.skill-chip--secondary]="!detail.isPrimary">
+                  {{ detail.name }}
+                  @if (detail.level) {
+                    <span class="skill-chip__level">· {{ detail.level }}</span>
+                  }
+                </span>
+              }
             }
           </div>
 

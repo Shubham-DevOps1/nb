@@ -4,6 +4,8 @@ const { matchAllRequirements } = require('../requirements/resourceMatcher');
 const { buildRequirementDocx } = require('../requirements/documentGenerator');
 const logger = require('../utils/logger');
 
+const MAX_REQUIREMENTS_PER_REMATCH = 25;
+
 /**
  * Handles POST /api/requirements/analyze[?format=docx]
  * Expects a multipart form with field 'document' containing a single PDF
@@ -52,6 +54,48 @@ async function analyzeRequirementDocument(req, res) {
   }
 }
 
+/**
+ * Handles POST /api/requirements/rematch
+ * Re-scores an already-extracted set of requirements against the full
+ * candidate pool using caller-supplied weights, rather than re-parsing the
+ * source PDF - lets the UI's weight sliders re-rank live without
+ * re-uploading or re-running Gemini extraction.
+ */
+async function rematchRequirements(req, res) {
+  const { requirements, weights } = req.body || {};
+
+  if (!Array.isArray(requirements) || requirements.length === 0) {
+    return res.status(400).json({
+      error: 'Missing requirements. Expected a non-empty array of previously extracted requirement objects.'
+    });
+  }
+
+  if (requirements.length > MAX_REQUIREMENTS_PER_REMATCH) {
+    return res.status(400).json({
+      error: `Too many requirements. Maximum ${MAX_REQUIREMENTS_PER_REMATCH} per rematch request.`
+    });
+  }
+
+  const invalid = requirements.find(r => !r || !Array.isArray(r.skills) || r.skills.length === 0 || !r.role);
+  if (invalid) {
+    return res.status(400).json({
+      error: 'Each requirement must include a "role" and a non-empty "skills" array.'
+    });
+  }
+
+  try {
+    const matches = await matchAllRequirements(requirements, weights);
+    return res.status(200).json({ matches });
+  } catch (err) {
+    logger.error('Requirement rematch failed.', err);
+    return res.status(500).json({
+      error: 'Internal Server Error during requirement rematch.',
+      message: err.message
+    });
+  }
+}
+
 module.exports = {
-  analyzeRequirementDocument
+  analyzeRequirementDocument,
+  rematchRequirements
 };
