@@ -15,7 +15,7 @@
           }
           <span class="req-card__status" [class.req-card__status--warn]="!match.sufficientResources">
             <app-icon [name]="match.sufficientResources ? 'circle-check' : 'circle-alert'" [size]="13" />
-            {{ match.matchedCount }}/{{ match.count }} matched
+            need {{ match.count }} · {{ match.matchedCount }} available
           </span>
         </div>
 

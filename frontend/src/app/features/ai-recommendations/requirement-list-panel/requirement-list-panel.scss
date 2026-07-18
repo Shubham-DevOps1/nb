@@ -48,7 +48,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
 }
 
 .req-card__domain {
@@ -63,7 +64,6 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-success);
-  white-space: nowrap;
 }
 
 .req-card__status--warn {
