@@ -1,0 +1,222 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.empty-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.readiness-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  background: var(--color-danger-100);
+  color: var(--color-danger);
+  white-space: nowrap;
+}
+
+.readiness-badge--ready {
+  background: var(--color-success-100);
+  color: var(--color-success);
+}
+
+.roles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.role-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.role-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.fill-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: var(--color-danger-100);
+  color: var(--color-danger);
+  white-space: nowrap;
+}
+
+.fill-pill--met {
+  background: var(--color-success-100);
+  color: var(--color-success);
+}
+
+.missing-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  background: var(--color-danger-50);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+
+  app-icon {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-100);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.member-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-row__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.member-row__name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.member-row__meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0.1rem 0 0;
+}
+
+.status-pill {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-success-100);
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.status-pill--warn {
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.remove-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  border: none;
+  background: none;
+  color: var(--color-text-placeholder);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-surface-muted);
+    color: var(--color-danger);
+  }
+}
+
+.empty-role-note {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0;
+
+  a {
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

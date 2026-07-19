@@ -36,7 +36,7 @@ export class Sidebar {
       title: 'Talent',
       items: [
         { label: 'Employee Directory', icon: 'users', route: '/employee-directory' },
-        { label: 'Team Builder', icon: 'team' },
+        { label: 'Team Builder', icon: 'team', route: '/team-builder' },
         { label: 'Knowledge Base', icon: 'knowledge-base' },
       ],
     },

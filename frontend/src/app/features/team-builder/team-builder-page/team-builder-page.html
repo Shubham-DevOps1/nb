@@ -1,0 +1,92 @@
+@if (!analysisService.result()) {
+  <div class="empty-wrap">
+    <app-empty-state
+      icon="team"
+      title="No requirement analyzed yet"
+      subtitle="Analyze a client requirement document first, then shortlist candidates from AI Recommendations to start building a team."
+    />
+  </div>
+} @else {
+  <div class="page">
+    <app-card class="header-card">
+      <div class="header-row">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat__value">{{ teamBuilder.teamStats().totalHeadcount }}</span>
+            <span class="stat__label">Shortlisted</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value">{{ teamBuilder.teamStats().availableNow }}</span>
+            <span class="stat__label">Available Now</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value">{{ teamBuilder.teamStats().avgExperience }}y</span>
+            <span class="stat__label">Avg. Experience</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value">{{ teamBuilder.teamStats().avgPerformance }}/5</span>
+            <span class="stat__label">Avg. Performance</span>
+          </div>
+        </div>
+
+        <span
+          class="readiness-badge"
+          [class.readiness-badge--ready]="teamBuilder.overallReady()"
+        >
+          <app-icon [name]="teamBuilder.overallReady() ? 'circle-check' : 'circle-alert'" [size]="15" />
+          {{ teamBuilder.overallReady() ? 'Ready to allocate' : 'Incomplete' }}
+        </span>
+      </div>
+    </app-card>
+
+    <div class="roles">
+      @for (role of teamBuilder.readiness(); track role.role) {
+        <app-card class="role-card">
+          <div class="role-card__head">
+            <h3 class="role-card__title">{{ role.role }}</h3>
+            <span class="fill-pill" [class.fill-pill--met]="role.headcountMet">
+              {{ role.filled }}/{{ role.required }} filled
+            </span>
+          </div>
+
+          @if (role.missingSkills.length) {
+            <p class="missing-note">
+              <app-icon name="circle-alert" [size]="13" />
+              No shortlisted member covers: {{ role.missingSkills.join(', ') }}
+            </p>
+          }
+
+          @if (role.members.length) {
+            <div class="member-list">
+              @for (member of role.members; track member.employeeId) {
+                <div class="member-row">
+                  <span class="avatar">{{ initials(member.name) }}</span>
+                  <div class="member-row__body">
+                    <div class="member-row__top">
+                      <span class="member-row__name">{{ member.name }}</span>
+                      <span
+                        class="status-pill"
+                        [class.status-pill--warn]="availabilityTone(member.availability) === 'warn'"
+                      >
+                        {{ member.availability }}
+                      </span>
+                    </div>
+                    <p class="member-row__meta">{{ member.designation }} · {{ member.matchScore }}% match</p>
+                  </div>
+                  <button type="button" class="remove-btn" (click)="removeMember(role.role, member.employeeId)" aria-label="Remove">
+                    <app-icon name="x" [size]="14" />
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-role-note">
+              No one shortlisted yet.
+              <a routerLink="/recommendations">Go to AI Recommendations →</a>
+            </p>
+          }
+        </app-card>
+      }
+    </div>
+  </div>
+}

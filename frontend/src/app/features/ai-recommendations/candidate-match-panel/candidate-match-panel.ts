@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
 import { ProgressBar } from '../../../shared/ui/progress-bar/progress-bar';
 import { MatchedResource, RequirementMatch } from '../../requirement-analysis/requirement-analysis.service';
+import { TeamBuilderService } from '../../team-builder/team-builder.service';
 
 @Component({
   selector: 'app-candidate-match-panel',
@@ -11,7 +12,13 @@ import { MatchedResource, RequirementMatch } from '../../requirement-analysis/re
   styleUrl: './candidate-match-panel.scss',
 })
 export class CandidateMatchPanel {
+  protected readonly teamBuilder = inject(TeamBuilderService);
+
   readonly match = input<RequirementMatch | null>(null);
+
+  protected toggleShortlist(role: string, resource: MatchedResource): void {
+    this.teamBuilder.toggle(role, resource);
+  }
 
   protected initials(name: string): string {
     return name

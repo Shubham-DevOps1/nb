@@ -41,7 +41,12 @@
               <span class="score-value">{{ resource.matchScore }}%</span>
               <span class="score-label">Match</span>
             </div>
-            <app-button variant="secondary">Shortlist</app-button>
+            <app-button
+              [variant]="teamBuilder.isShortlisted(resource.employeeId, m.role) ? 'primary' : 'secondary'"
+              (click)="toggleShortlist(m.role, resource)"
+            >
+              {{ teamBuilder.isShortlisted(resource.employeeId, m.role) ? 'Shortlisted ✓' : 'Shortlist' }}
+            </app-button>
           </div>
 
           <div class="candidate-card__skills">

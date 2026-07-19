@@ -40,6 +40,17 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'team-builder',
+    loadComponent: () =>
+      import('./features/team-builder/team-builder-page/team-builder-page').then(
+        (m) => m.TeamBuilderPage,
+      ),
+    data: {
+      title: 'Team Builder',
+      subtitle: 'Assemble a team from shortlisted candidates and check its readiness',
+    },
+  },
+  {
     path: 'skill-gap-analysis',
     loadComponent: () =>
       import('./features/skill-gap-analysis/skill-gap-analysis-page/skill-gap-analysis-page').then(
