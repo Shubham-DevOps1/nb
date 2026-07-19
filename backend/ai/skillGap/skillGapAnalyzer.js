@@ -1,5 +1,5 @@
 const { loadJsonFile } = require('../utils/fileLoader');
-const skillsMaster = require('../../generator/master/skills');
+const { buildSkillCategoryMap } = require('../utils/skillTaxonomy');
 
 // "Current and upcoming project demand" (per the module's stated purpose) -
 // Completed projects are history, not demand.
@@ -10,16 +10,6 @@ const SKILL_GAP_TABLE_LIMIT = 30;
 const RECOMMENDED_CAPACITY_LIMIT = 6;
 
 let cache = null;
-
-function buildSkillCategoryMap() {
-  const map = new Map();
-  for (const [category, skills] of Object.entries(skillsMaster)) {
-    for (const skill of skills) {
-      map.set(skill.toLowerCase(), category);
-    }
-  }
-  return map;
-}
 
 /**
  * Available supply per skill: distinct employees who hold it (primary or

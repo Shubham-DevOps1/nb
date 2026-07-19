@@ -1,5 +1,6 @@
 const { getCollection, getEmployeesByMinExperience } = require('../chroma/employeeCollection');
 const requirementConfig = require('../config/requirementConfig');
+const { parseSkillsDetailed } = require('../utils/skillEncoding');
 const logger = require('../utils/logger');
 
 const DEFAULT_WEIGHTS = { skillFit: 0.4, availabilityFit: 0.2, deliveryTrackRecord: 0.2, domainCertFit: 0.2 };
@@ -36,19 +37,6 @@ function normalizeWeights(rawWeights) {
 
 const LEVEL_MULTIPLIER = { Beginner: 0.6, Intermediate: 0.75, Advanced: 0.9, Expert: 1.0 };
 const DEFAULT_LEVEL_MULTIPLIER = 0.75;
-
-/**
- * Parses the "name|level|years;name|level|years" encoding written by
- * ingestKnowledgeCards.js back into skill objects. Chroma metadata can't
- * hold nested arrays, so this string encoding is the round-trip format.
- */
-function parseSkillsDetailed(encoded) {
-  if (!encoded) return [];
-  return encoded.split(';').filter(Boolean).map(entry => {
-    const [name, level, years] = entry.split('|');
-    return { name, level: level || '', yearsOfExperience: Number(years) || 0 };
-  });
-}
 
 /**
  * Turns a single matched skill into a 0-100 proficiency-aware score, rather

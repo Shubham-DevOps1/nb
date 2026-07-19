@@ -1,0 +1,71 @@
+@if (matches().length === 0) {
+  <div class="empty-note">
+    <app-icon name="requirement" [size]="16" />
+    <span>Analyze a client requirement document first to check per-requirement skill coverage.</span>
+    <a routerLink="/requirement-analysis" class="empty-note__link">Go to Requirement Analysis →</a>
+  </div>
+} @else {
+  <div class="picker-row">
+    <label class="picker-label" for="requirement-picker">Check coverage for</label>
+    <select
+      id="requirement-picker"
+      class="picker"
+      (change)="onSelectRequirement($any($event.target).value)"
+    >
+      <option value="" disabled selected>Select a requirement…</option>
+      @for (match of matches(); track match.role; let i = $index) {
+        <option [value]="i">{{ match.role }}</option>
+      }
+    </select>
+  </div>
+
+  @if (gapService.isLoading()) {
+    <p class="state-text">Checking skill coverage…</p>
+  } @else if (gapService.error(); as err) {
+    <p class="state-text state-text--error">{{ err }}</p>
+  } @else if (gapService.result(); as gap) {
+    <div class="gap-summary">
+      <span><strong>{{ gap.eligiblePoolSize }}</strong> eligible ({{ gap.minExperience }}+ yrs exp)</span>
+      <span><strong>{{ gap.count }}</strong> needed for {{ gap.role }}</span>
+    </div>
+
+    <div class="coverage-rows">
+      @for (row of gap.skillCoverage; track row.skill) {
+        <div class="coverage-row">
+          <div class="coverage-row__top">
+            <span class="coverage-row__skill">{{ row.skill }}</span>
+            <span class="coverage-row__count">{{ row.employeesWithSkill }} available · {{ row.needed }} needed</span>
+            @if (row.shortfall > 0) {
+              <button type="button" class="shortfall-pill" (click)="toggleExpanded(row.skill)">
+                <app-icon name="circle-alert" [size]="12" />
+                Short by {{ row.shortfall }}
+              </button>
+            } @else {
+              <span class="ok-pill">
+                <app-icon name="circle-check" [size]="12" />
+                Covered
+              </span>
+            }
+          </div>
+
+          @if (row.shortfall > 0 && expandedSkill() === row.skill) {
+            <div class="upskill-list">
+              @if (row.upskillCandidates.length) {
+                <p class="upskill-list__title">Suggested to upskill in {{ row.skill }}:</p>
+                @for (c of row.upskillCandidates; track c.employeeId) {
+                  <div class="upskill-card">
+                    <span class="upskill-card__name">{{ c.name }}</span>
+                    <span class="upskill-card__meta">{{ c.designation }} · {{ c.department }} · {{ c.experience }}y exp</span>
+                    <span class="upskill-card__note">Already has {{ c.matchedOtherSkills.join(', ') }}</span>
+                  </div>
+                }
+              } @else {
+                <p class="upskill-list__empty">No adjacent-skill employees found to suggest for upskilling.</p>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+}
