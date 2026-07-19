@@ -55,7 +55,13 @@ export class TeamBuilderService {
 
     return requirements.map(req => {
       const members = shortlist.filter(m => m.role === req.role).map(m => m.resource);
-      const coveredSkills = new Set(members.flatMap(m => m.matchedSkills.map(s => s.toLowerCase())));
+      // matchedSkills only reflects primary-skill matches (see resourceMatcher.js's
+      // scoreEmployee); matchedSkillDetails also credits secondary skills, which
+      // already count toward this person's match score - using matchedSkills alone
+      // under-counted real coverage and made teams look incomplete when they weren't.
+      const coveredSkills = new Set(
+        members.flatMap(m => m.matchedSkillDetails.filter(d => d.matched).map(d => d.name.toLowerCase()))
+      );
       const missingSkills = req.skills.filter(s => !coveredSkills.has(s.toLowerCase()));
       const unavailableMembers = members.filter(m => m.availability.toLowerCase() !== 'available');
 
@@ -71,8 +77,13 @@ export class TeamBuilderService {
     });
   });
 
+  // "Ready" means every role has enough people assigned - the actual
+  // deployment blocker. Missing-skill coverage is shown per role as an
+  // advisory flag (e.g. "nobody shortlisted covers PostgreSQL"), not a hard
+  // block - a fully-staffed team can still ship even if one nice-to-have
+  // skill isn't individually covered by a specific member.
   readonly overallReady = computed(() =>
-    this.readiness().length > 0 && this.readiness().every(r => r.headcountMet && r.missingSkills.length === 0)
+    this.readiness().length > 0 && this.readiness().every(r => r.headcountMet)
   );
 
   readonly teamStats = computed(() => {
