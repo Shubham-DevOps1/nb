@@ -27,7 +27,6 @@ export class Sidebar {
     {
       title: 'Workspace',
       items: [
-        { label: 'Dashboard', icon: 'dashboard' },
         { label: 'Requirement Analysis', icon: 'requirement', route: '/requirement-analysis' },
         { label: 'AI Recommendations', icon: 'sparkles', route: '/recommendations' },
       ],
@@ -37,15 +36,12 @@ export class Sidebar {
       items: [
         { label: 'Employee Directory', icon: 'users', route: '/employee-directory' },
         { label: 'Team Builder', icon: 'team', route: '/team-builder' },
-        { label: 'Knowledge Base', icon: 'knowledge-base' },
       ],
     },
     {
       title: 'Intelligence',
       items: [
         { label: 'Skill Gap Analysis', icon: 'skill-gap', route: '/skill-gap-analysis' },
-        { label: 'Analytics', icon: 'analytics' },
-        { label: 'Settings', icon: 'settings' },
       ],
     },
   ];
