@@ -25,7 +25,7 @@
     <p class="state-text state-text--error">{{ err }}</p>
   } @else if (gapService.result(); as gap) {
     <div class="gap-summary">
-      <span><strong>{{ gap.eligiblePoolSize }}</strong> eligible ({{ gap.minExperience }}+ yrs exp)</span>
+      <span><strong>{{ gap.matchedCandidatePoolSize }}</strong> AI-matched candidates ({{ gap.minExperience }}+ yrs exp)</span>
       <span><strong>{{ gap.count }}</strong> needed for {{ gap.role }}</span>
     </div>
 

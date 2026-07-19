@@ -25,7 +25,7 @@ export interface RequirementSkillGap {
   role: string;
   count: number;
   minExperience: number;
-  eligiblePoolSize: number;
+  matchedCandidatePoolSize: number;
   skillCoverage: SkillCoverageRow[];
 }
 
