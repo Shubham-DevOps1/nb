@@ -110,6 +110,7 @@ async function ingest() {
         primarySkills: empInfo ? empInfo.primarySkills.map(s => s.name).join(', ') : '',
         primarySkillsDetailed: empInfo ? encodeSkillsDetailed(empInfo.primarySkills) : '',
         secondarySkillsDetailed: empInfo ? encodeSkillsDetailed(empInfo.secondarySkills) : '',
+        certifications: empInfo && empInfo.certifications ? empInfo.certifications.map(c => c.name).join(', ') : '',
         manager: empInfo ? empInfo.managerName : 'Board of Directors'
       };
 

@@ -51,6 +51,20 @@
         />
       </div>
 
+      <div class="slider-row">
+        <div class="slider-row__label">
+          <span>Domain &amp; certification fit</span>
+          <span class="slider-row__value">{{ normalized().domainCertFit }}%</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          [(ngModel)]="domainCertFit"
+          (input)="onWeightChange()"
+        />
+      </div>
+
       <div class="panel__footer">
         @if (isRematching()) {
           <span class="panel__status">Re-scoring candidates…</span>

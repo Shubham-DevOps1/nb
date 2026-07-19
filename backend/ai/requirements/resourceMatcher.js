@@ -2,7 +2,7 @@ const { getCollection, getEmployeesByMinExperience } = require('../chroma/employ
 const requirementConfig = require('../config/requirementConfig');
 const logger = require('../utils/logger');
 
-const DEFAULT_WEIGHTS = { skillFit: 0.5, availabilityFit: 0.25, deliveryTrackRecord: 0.25 };
+const DEFAULT_WEIGHTS = { skillFit: 0.4, availabilityFit: 0.2, deliveryTrackRecord: 0.2, domainCertFit: 0.2 };
 
 /**
  * Normalizes user-supplied weights so they always sum to 1, rather than
@@ -14,20 +14,23 @@ function normalizeWeights(rawWeights) {
   const skillFit = Number(rawWeights?.skillFit);
   const availabilityFit = Number(rawWeights?.availabilityFit);
   const deliveryTrackRecord = Number(rawWeights?.deliveryTrackRecord);
+  const domainCertFit = Number(rawWeights?.domainCertFit);
 
   const candidate = {
     skillFit: Number.isFinite(skillFit) && skillFit >= 0 ? skillFit : DEFAULT_WEIGHTS.skillFit,
     availabilityFit: Number.isFinite(availabilityFit) && availabilityFit >= 0 ? availabilityFit : DEFAULT_WEIGHTS.availabilityFit,
     deliveryTrackRecord: Number.isFinite(deliveryTrackRecord) && deliveryTrackRecord >= 0 ? deliveryTrackRecord : DEFAULT_WEIGHTS.deliveryTrackRecord,
+    domainCertFit: Number.isFinite(domainCertFit) && domainCertFit >= 0 ? domainCertFit : DEFAULT_WEIGHTS.domainCertFit,
   };
 
-  const sum = candidate.skillFit + candidate.availabilityFit + candidate.deliveryTrackRecord;
+  const sum = candidate.skillFit + candidate.availabilityFit + candidate.deliveryTrackRecord + candidate.domainCertFit;
   if (sum <= 0) return { ...DEFAULT_WEIGHTS };
 
   return {
     skillFit: candidate.skillFit / sum,
     availabilityFit: candidate.availabilityFit / sum,
     deliveryTrackRecord: candidate.deliveryTrackRecord / sum,
+    domainCertFit: candidate.domainCertFit / sum,
   };
 }
 
@@ -58,6 +61,47 @@ function skillProficiencyScore(skillEntry, isPrimary) {
   const levelMultiplier = LEVEL_MULTIPLIER[skillEntry.level] ?? DEFAULT_LEVEL_MULTIPLIER;
   const yearsBonus = Math.min(skillEntry.yearsOfExperience, 5) * 2;
   return Math.min(100, base * levelMultiplier + yearsBonus);
+}
+
+/**
+ * Certification names rarely match verbatim between what Gemini extracts
+ * from a requirement doc ("AWS certification") and an employee's actual
+ * record ("AWS Certified Solutions Architect - Associate") - a loose
+ * case-insensitive substring check in either direction catches these
+ * without requiring exact strings.
+ */
+function certificationMatches(requiredCert, empCertNames) {
+  const required = requiredCert.toLowerCase();
+  return empCertNames.some(name => name.includes(required) || required.includes(name));
+}
+
+/**
+ * Combines two otherwise-unrelated "does this person actually fit the
+ * specific ask" signals into one score: has the employee worked in the
+ * requirement's stated domain, and do they hold any of the requirement's
+ * required certifications. Either half is skipped (treated as satisfied)
+ * when the requirement doesn't specify it, so a requirement with no domain
+ * and no certifications doesn't drag every candidate's score down for
+ * something nobody asked for.
+ */
+function domainCertFitScore(domainMatch, requirement, empCertificationsRaw) {
+  const hasDomainRequirement = Boolean(requirement.domain);
+  const requiredCerts = requirement.certifications || [];
+  const hasCertRequirement = requiredCerts.length > 0;
+
+  if (!hasDomainRequirement && !hasCertRequirement) return 100;
+
+  const empCertNames = empCertificationsRaw
+    ? empCertificationsRaw.split(', ').map(c => c.toLowerCase()).filter(Boolean)
+    : [];
+
+  const domainScore = hasDomainRequirement ? (domainMatch ? 100 : 0) : null;
+  const certScore = hasCertRequirement
+    ? Math.round((requiredCerts.filter(c => certificationMatches(c, empCertNames)).length / requiredCerts.length) * 100)
+    : null;
+
+  const parts = [domainScore, certScore].filter(s => s !== null);
+  return Math.round(parts.reduce((sum, s) => sum + s, 0) / parts.length);
 }
 
 /**
@@ -134,8 +178,12 @@ function scoreEmployee(metadata, requirement, weights) {
   const availabilityFitScore = availabilityScore(metadata.availability);
   const performanceRating = Number(metadata.performanceRating) || 0;
   const deliveryScore = Math.round(Math.min(100, (performanceRating / 5) * 100));
+  const domainCertScore = domainCertFitScore(domainMatch, requirement, metadata.certifications);
   const matchScore = Math.round(
-    skillFitScore * weights.skillFit + availabilityFitScore * weights.availabilityFit + deliveryScore * weights.deliveryTrackRecord
+    skillFitScore * weights.skillFit +
+    availabilityFitScore * weights.availabilityFit +
+    deliveryScore * weights.deliveryTrackRecord +
+    domainCertScore * weights.domainCertFit
   );
 
   return {
@@ -146,6 +194,7 @@ function scoreEmployee(metadata, requirement, weights) {
     skillFitScore,
     availabilityFitScore,
     deliveryScore,
+    domainCertScore,
     matchScore
   };
 }
@@ -167,7 +216,7 @@ async function matchRequirement(requirement, rawWeights) {
 
   for (let i = 0; i < ids.length; i++) {
     const metadata = metadatas[i];
-    const { matchedSkills, matchedSkillDetails, domainMatch, performanceRating, skillFitScore, availabilityFitScore, deliveryScore, matchScore } =
+    const { matchedSkills, matchedSkillDetails, domainMatch, performanceRating, skillFitScore, availabilityFitScore, deliveryScore, domainCertScore, matchScore } =
       scoreEmployee(metadata, requirement, weights);
 
     if (matchedSkills.length === 0) continue;
@@ -188,7 +237,8 @@ async function matchRequirement(requirement, rawWeights) {
       scoreBreakdown: {
         skillFit: skillFitScore,
         availabilityFit: availabilityFitScore,
-        deliveryTrackRecord: deliveryScore
+        deliveryTrackRecord: deliveryScore,
+        domainCertFit: domainCertScore
       }
     });
   }

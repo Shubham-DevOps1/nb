@@ -28,4 +28,15 @@ export const routes: Routes = [
       subtitle: 'Semantic matches ranked by fit, availability, and past performance',
     },
   },
+  {
+    path: 'skill-gap-analysis',
+    loadComponent: () =>
+      import('./features/skill-gap-analysis/skill-gap-analysis-page/skill-gap-analysis-page').then(
+        (m) => m.SkillGapAnalysisPage,
+      ),
+    data: {
+      title: 'Skill Gap Analysis',
+      subtitle: 'Skill supply vs. active and upcoming project demand',
+    },
+  },
 ];

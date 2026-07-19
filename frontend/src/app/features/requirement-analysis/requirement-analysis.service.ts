@@ -6,6 +6,7 @@ export interface ScoreBreakdown {
   skillFit: number;
   availabilityFit: number;
   deliveryTrackRecord: number;
+  domainCertFit: number;
 }
 
 export interface MatchedSkillDetail {
@@ -63,6 +64,7 @@ export interface MatchWeights {
   skillFit: number;
   availabilityFit: number;
   deliveryTrackRecord: number;
+  domainCertFit: number;
 }
 
 // Relative path - works unchanged behind the dev-server proxy (see

@@ -43,7 +43,7 @@ export class Sidebar {
     {
       title: 'Intelligence',
       items: [
-        { label: 'Skill Gap Analysis', icon: 'skill-gap' },
+        { label: 'Skill Gap Analysis', icon: 'skill-gap', route: '/skill-gap-analysis' },
         { label: 'Analytics', icon: 'analytics' },
         { label: 'Settings', icon: 'settings' },
       ],

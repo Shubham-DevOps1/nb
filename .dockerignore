@@ -15,13 +15,13 @@ backend/ai/.chroma-data
 backend/ai/data/employees
 backend/ai/data/uploads
 
-# backend/generator/output: employees.json and knowledgeCards.json are
-# required at runtime by backend/ai/ingestion (re-ingestion is a real,
-# recurring operation, not a one-off) - only the SQL seed files and the
-# JSON sources nothing reads (resumes/projects/managerReviews) are excluded.
+# backend/generator/output: employees.json/knowledgeCards.json are required
+# at runtime by backend/ai/ingestion (re-ingestion is a real, recurring
+# operation), and projects.json is required by backend/ai/skillGap (Active/
+# Pipeline project technology demand) - only the SQL seed files and the
+# JSON source nothing reads (resumes/managerReviews) are excluded.
 backend/generator/output/seed.sql
 backend/generator/output/employees.sql
 backend/generator/output/projects.sql
 backend/generator/output/resumes.json
-backend/generator/output/projects.json
 backend/generator/output/managerReviews.json

@@ -1,0 +1,122 @@
+@if (service.isLoading()) {
+  <div class="state-centered">
+    <span class="spinner"></span>
+    <p class="state-text">Analyzing skill supply vs. project demand…</p>
+  </div>
+} @else if (service.error(); as err) {
+  <div class="state-centered">
+    <app-empty-state icon="skill-gap" title="Couldn't load skill gap analysis" [subtitle]="err" />
+  </div>
+} @else if (service.result(); as data) {
+  <div class="page">
+    <div class="stats">
+      <div class="stat-card">
+        <app-icon name="users" [size]="20" />
+        <span class="stat-card__value">{{ data.totalEmployees }}</span>
+        <span class="stat-card__label">Total Employees</span>
+      </div>
+      <div class="stat-card">
+        <app-icon name="requirement" [size]="20" />
+        <span class="stat-card__value">{{ data.demandProjectCount }}</span>
+        <span class="stat-card__label">Active + Pipeline Projects</span>
+      </div>
+      <div class="stat-card">
+        <app-icon name="skill-gap" [size]="20" />
+        <span class="stat-card__value">{{ data.skillGapTable.length }}</span>
+        <span class="stat-card__label">Skills in Real Demand</span>
+      </div>
+    </div>
+
+    <app-card class="section">
+      <h3 class="section__title">Top Missing Skills</h3>
+      <p class="section__subtitle">Ranked by gap as a share of current demand</p>
+      <div class="missing-skills">
+        @for (row of data.topMissingSkills; track row.skill) {
+          <div class="missing-skill-row">
+            <span class="missing-skill-row__name">{{ row.skill }}</span>
+            <app-progress-bar [percent]="row.gapPercentage" />
+            <span class="missing-skill-row__value">{{ row.gapPercentage }}%</span>
+          </div>
+        } @empty {
+          <p class="empty-note">No skill gaps detected against current demand.</p>
+        }
+      </div>
+    </app-card>
+
+    <app-card class="section">
+      <h3 class="section__title">Organization Skill Gap</h3>
+      <p class="section__subtitle">
+        Required = active/pipeline project team capacity needing the skill · Available = employees who hold it
+      </p>
+      <div class="gap-table">
+        <div class="gap-table__row gap-table__row--head">
+          <span>Skill</span>
+          <span>Category</span>
+          <span>Required</span>
+          <span>Available</span>
+          <span>Gap</span>
+        </div>
+        @for (row of data.skillGapTable; track row.skill) {
+          <div class="gap-table__row">
+            <span class="gap-table__skill">{{ row.skill }}</span>
+            <span class="gap-table__category">{{ row.category }}</span>
+            <span>{{ row.required }}</span>
+            <span>{{ row.available }}</span>
+            <span class="gap-pill" [class.gap-pill--danger]="severityClass(row.gap) === 'danger'" [class.gap-pill--success]="severityClass(row.gap) === 'success'">
+              {{ row.gap === 0 ? '0' : row.gap }}
+            </span>
+          </div>
+        }
+      </div>
+    </app-card>
+
+    <app-card class="section">
+      <h3 class="section__title">Practice-Area Gap</h3>
+      <p class="section__subtitle">Skills grouped by practice area (Cloud, Backend, QA, etc.)</p>
+      <div class="category-grid">
+        @for (cat of data.categoryGaps; track cat.category) {
+          <div class="category-card">
+            <p class="category-card__name">{{ cat.category }}</p>
+            <div class="category-card__row">
+              <span>Need</span>
+              <span class="category-card__value">{{ cat.required }}</span>
+            </div>
+            <div class="category-card__row">
+              <span>Available</span>
+              <span class="category-card__value">{{ cat.available }}</span>
+            </div>
+            <div class="category-card__row category-card__row--gap">
+              <span>Gap</span>
+              <span
+                class="gap-pill"
+                [class.gap-pill--danger]="severityClass(cat.gap) === 'danger'"
+                [class.gap-pill--success]="severityClass(cat.gap) === 'success'"
+              >
+                {{ cat.gap }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </app-card>
+
+    @if (data.recommendedCapacity.length) {
+      <app-card class="section">
+        <h3 class="section__title">Recommended Additional Capacity</h3>
+        <p class="section__subtitle">Derived directly from the practice-area gaps above, not a separate forecast</p>
+        <div class="capacity-list">
+          @for (rec of data.recommendedCapacity; track rec.category) {
+            <div class="capacity-chip">
+              <app-icon name="award" [size]="13" />
+              {{ rec.additionalCapacityNeeded }} more in {{ rec.category }}
+            </div>
+          }
+        </div>
+      </app-card>
+    }
+  </div>
+} @else {
+  <div class="state-centered">
+    <app-empty-state icon="skill-gap" title="Skill gap analysis will appear here" />
+  </div>
+}

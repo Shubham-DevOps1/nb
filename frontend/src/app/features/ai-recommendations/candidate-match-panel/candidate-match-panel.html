@@ -73,6 +73,11 @@
               <app-progress-bar [percent]="resource.scoreBreakdown.deliveryTrackRecord" />
               <span class="breakdown__value">{{ resource.scoreBreakdown.deliveryTrackRecord }}%</span>
             </div>
+            <div class="breakdown__row">
+              <span class="breakdown__label">Domain &amp; cert fit</span>
+              <app-progress-bar [percent]="resource.scoreBreakdown.domainCertFit" />
+              <span class="breakdown__value">{{ resource.scoreBreakdown.domainCertFit }}%</span>
+            </div>
           </div>
 
           <p class="candidate-card__note">

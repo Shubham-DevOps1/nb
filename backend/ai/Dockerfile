@@ -21,11 +21,12 @@ RUN npm ci --omit=dev
 COPY backend/ai/ ./
 COPY backend/generator/master/ /app/backend/generator/master/
 
-# Re-ingestion (ingestion/ingestKnowledgeCards.js) reads these at runtime via
-# fileLoader.js, not just at a one-off seeding step - bake them in so the
-# container can re-ingest on its own without the full repo being shipped to
-# the instance (see buildspec.yml/.dockerignore for what actually ships).
-COPY backend/generator/output/employees.json backend/generator/output/knowledgeCards.json /app/backend/generator/output/
+# Re-ingestion (ingestion/ingestKnowledgeCards.js) and skill-gap analysis
+# (skillGap/skillGapAnalyzer.js) read these at runtime via fileLoader.js, not
+# just at a one-off seeding step - bake them in so the container is
+# self-sufficient without the full repo being shipped to the instance (see
+# buildspec.yml/.dockerignore for what actually ships).
+COPY backend/generator/output/employees.json backend/generator/output/knowledgeCards.json backend/generator/output/projects.json /app/backend/generator/output/
 
 # data/ holds runtime-written employee/resume records - mount a volume here
 # in docker-compose/ECS so it survives container restarts and redeploys.
