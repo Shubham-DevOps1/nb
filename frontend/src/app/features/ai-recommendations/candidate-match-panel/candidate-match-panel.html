@@ -9,7 +9,7 @@
         <p class="banner__subtitle">{{ m.justification }}</p>
         <p class="banner__status">
           <app-icon [name]="m.sufficientResources ? 'circle-check' : 'circle-alert'" [size]="14" />
-          {{ m.sufficientResources ? 'Sufficient resources available' : 'Resource shortfall - need ' + m.count + ', have ' + m.matchedCount }}
+          {{ m.count }} required · {{ m.matchedCount }} matched
         </p>
       </div>
     </div>
