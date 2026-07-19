@@ -11,8 +11,18 @@
 }
 
 .filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.filters__row {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  // minmax(0, ...) clamps each track to the row's actual available width -
+  // without it, a <select>'s native intrinsic content width (based on its
+  // widest option, e.g. "Available in 2 weeks") can exceed a plain "1fr"
+  // share and push the row past the container instead of shrinking to fit.
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
@@ -20,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0 var(--space-3);
@@ -44,6 +55,8 @@
 }
 
 .filters__skill {
+  min-width: 0;
+  width: 100%;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
@@ -54,6 +67,8 @@
 }
 
 select {
+  min-width: 0;
+  width: 100%;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);

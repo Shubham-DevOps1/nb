@@ -10,27 +10,29 @@
       />
     </div>
 
-    <select [(ngModel)]="department" (ngModelChange)="onDropdownChange()">
-      <option value="">All departments</option>
-      @for (dept of service.filterOptions()?.departments ?? []; track dept) {
-        <option [value]="dept">{{ dept }}</option>
-      }
-    </select>
+    <div class="filters__row">
+      <select [(ngModel)]="department" (ngModelChange)="onDropdownChange()">
+        <option value="">All departments</option>
+        @for (dept of service.filterOptions()?.departments ?? []; track dept) {
+          <option [value]="dept">{{ dept }}</option>
+        }
+      </select>
 
-    <select [(ngModel)]="availability" (ngModelChange)="onDropdownChange()">
-      <option value="">Any availability</option>
-      @for (a of service.filterOptions()?.availabilities ?? []; track a) {
-        <option [value]="a">{{ a }}</option>
-      }
-    </select>
+      <select [(ngModel)]="availability" (ngModelChange)="onDropdownChange()">
+        <option value="">Any availability</option>
+        @for (a of service.filterOptions()?.availabilities ?? []; track a) {
+          <option [value]="a">{{ a }}</option>
+        }
+      </select>
 
-    <input
-      type="text"
-      class="filters__skill"
-      placeholder="Filter by skill…"
-      [(ngModel)]="skill"
-      (ngModelChange)="onFilterChange()"
-    />
+      <input
+        type="text"
+        class="filters__skill"
+        placeholder="Filter by skill…"
+        [(ngModel)]="skill"
+        (ngModelChange)="onFilterChange()"
+      />
+    </div>
   </div>
 
   @if (service.isLoading()) {
