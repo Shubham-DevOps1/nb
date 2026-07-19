@@ -29,6 +29,17 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'employee-directory',
+    loadComponent: () =>
+      import('./features/employee-directory/employee-directory-page/employee-directory-page').then(
+        (m) => m.EmployeeDirectoryPage,
+      ),
+    data: {
+      title: 'Employee Directory',
+      subtitle: 'Browse and filter the full workforce',
+    },
+  },
+  {
     path: 'skill-gap-analysis',
     loadComponent: () =>
       import('./features/skill-gap-analysis/skill-gap-analysis-page/skill-gap-analysis-page').then(

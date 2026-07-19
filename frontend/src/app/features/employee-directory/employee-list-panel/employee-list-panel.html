@@ -1,0 +1,81 @@
+<div class="panel">
+  <div class="filters">
+    <div class="filters__search">
+      <app-icon name="search" [size]="15" />
+      <input
+        type="text"
+        placeholder="Search by name…"
+        [(ngModel)]="search"
+        (ngModelChange)="onFilterChange()"
+      />
+    </div>
+
+    <select [(ngModel)]="department" (ngModelChange)="onDropdownChange()">
+      <option value="">All departments</option>
+      @for (dept of service.filterOptions()?.departments ?? []; track dept) {
+        <option [value]="dept">{{ dept }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="availability" (ngModelChange)="onDropdownChange()">
+      <option value="">Any availability</option>
+      @for (a of service.filterOptions()?.availabilities ?? []; track a) {
+        <option [value]="a">{{ a }}</option>
+      }
+    </select>
+
+    <input
+      type="text"
+      class="filters__skill"
+      placeholder="Filter by skill…"
+      [(ngModel)]="skill"
+      (ngModelChange)="onFilterChange()"
+    />
+  </div>
+
+  @if (service.isLoading()) {
+    <p class="state-text">Loading employees…</p>
+  } @else if (service.error(); as err) {
+    <p class="state-text state-text--error">{{ err }}</p>
+  } @else if (service.result(); as result) {
+    <p class="result-count">{{ result.total }} employee(s) found</p>
+
+    <div class="list">
+      @for (emp of result.employees; track emp.employeeId) {
+        <button
+          type="button"
+          class="emp-card"
+          [class.emp-card--active]="selectedId() === emp.employeeId"
+          (click)="selectEmployee(emp.employeeId)"
+        >
+          <span class="avatar">{{ initials(emp.name) }}</span>
+          <div class="emp-card__body">
+            <div class="emp-card__top">
+              <h4 class="emp-card__name">{{ emp.name }}</h4>
+              <span
+                class="status-pill"
+                [class.status-pill--success]="availabilityTone(emp.availability) === 'success'"
+              >
+                {{ emp.availability }}
+              </span>
+            </div>
+            <p class="emp-card__meta">{{ emp.designation }} · {{ emp.department }} · {{ emp.experience }}y exp</p>
+            <div class="emp-card__skills">
+              @for (skillName of emp.topSkills; track skillName) {
+                <span class="skill-chip">{{ skillName }}</span>
+              }
+            </div>
+          </div>
+        </button>
+      } @empty {
+        <p class="state-text">No employees match these filters.</p>
+      }
+    </div>
+
+    <div class="pagination">
+      <button type="button" (click)="goToPage(-1)" [disabled]="page() <= 1">← Previous</button>
+      <span>Page {{ page() }} of {{ totalPages() }}</span>
+      <button type="button" (click)="goToPage(1)" [disabled]="page() >= totalPages()">Next →</button>
+    </div>
+  }
+</div>

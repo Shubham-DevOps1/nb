@@ -5,6 +5,7 @@ const resumeRoutes = require('./resumeRoutes');
 const requirementRoutes = require('./requirementRoutes');
 const chatRoutes = require('./chatRoutes');
 const skillGapRoutes = require('./skillGapRoutes');
+const employeeRoutes = require('./employeeRoutes');
 const logger = require('../utils/logger');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api', resumeRoutes);
 app.use('/api', requirementRoutes);
 app.use('/api', chatRoutes);
 app.use('/api', skillGapRoutes);
+app.use('/api', employeeRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

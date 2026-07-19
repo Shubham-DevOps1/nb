@@ -1,0 +1,93 @@
+@if (service.isDetailLoading()) {
+  <p class="state-text">Loading profile…</p>
+} @else if (service.detailError(); as err) {
+  <p class="state-text state-text--error">{{ err }}</p>
+} @else if (service.selectedEmployee(); as emp) {
+  <div class="profile">
+    <div class="header">
+      <span class="avatar">{{ initials(emp.name) }}</span>
+      <div class="header__body">
+        <h3 class="header__name">{{ emp.name }}</h3>
+        <p class="header__meta">{{ emp.designation }} · {{ emp.department }}</p>
+        <p class="header__meta">{{ emp.location }} · {{ emp.experience }}y experience</p>
+      </div>
+      <div class="header__stats">
+        <span class="stat-pill">{{ emp.availability }}</span>
+        <span class="stat-pill stat-pill--rating">
+          <app-icon name="award" [size]="12" />
+          {{ emp.performanceRating }}/5
+        </span>
+      </div>
+    </div>
+
+    <p class="summary">{{ emp.summary }}</p>
+
+    <div class="section">
+      <h4 class="section__title">Primary Skills</h4>
+      <div class="skill-chips">
+        @for (s of emp.primarySkills; track s.name) {
+          <span class="skill-chip">{{ s.name }} <span class="skill-chip__level">· {{ s.level }} ({{ s.yearsOfExperience }}y)</span></span>
+        }
+      </div>
+    </div>
+
+    @if (emp.secondarySkills.length) {
+      <div class="section">
+        <h4 class="section__title">Secondary Skills</h4>
+        <div class="skill-chips">
+          @for (s of emp.secondarySkills; track s.name) {
+            <span class="skill-chip skill-chip--secondary">{{ s.name }} <span class="skill-chip__level">· {{ s.level }}</span></span>
+          }
+        </div>
+      </div>
+    }
+
+    @if (emp.certifications.length) {
+      <div class="section">
+        <h4 class="section__title">Certifications</h4>
+        <div class="cert-chips">
+          @for (cert of emp.certifications; track cert.credentialId) {
+            <span class="cert-chip">
+              <app-icon name="award" [size]="12" />
+              {{ cert.name }}
+            </span>
+          }
+        </div>
+      </div>
+    }
+
+    @if (emp.projects.length) {
+      <div class="section">
+        <h4 class="section__title">Project History</h4>
+        <div class="project-list">
+          @for (proj of emp.projects; track proj.projectId) {
+            <div class="project-row">
+              <div class="project-row__top">
+                <span class="project-row__name">{{ proj.projectName }}</span>
+                @if (proj.isCurrent) {
+                  <span class="status-pill status-pill--success">Current</span>
+                }
+              </div>
+              <p class="project-row__role">{{ proj.role }} · {{ proj.startDate }} – {{ proj.endDate }}</p>
+              <p class="project-row__desc">{{ proj.description }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="section">
+      <h4 class="section__title">Background</h4>
+      <p class="detail-line">{{ emp.education.degree }}, {{ emp.education.institution }} ({{ emp.education.passingYear }})</p>
+      @if (emp.languages.length) {
+        <p class="detail-line">Languages: {{ emp.languages.join(', ') }}</p>
+      }
+      <p class="detail-line">Reports to {{ emp.managerName }}</p>
+    </div>
+  </div>
+} @else {
+  <div class="state-centered">
+    <app-icon name="users" [size]="28" />
+    <p class="state-text">Select an employee to view their profile</p>
+  </div>
+}
