@@ -11,6 +11,16 @@
 }
 
 .page__col {
+  // Grid items default to min-height:auto, same as flex items - without
+  // this, a column won't shrink below its content's height, so it just
+  // grows past the row instead of respecting height:100% + scrolling.
   height: 100%;
+  min-height: 0;
+}
+
+// The list panel scrolls internally (its own .list element), so filters and
+// pagination stay pinned - only the detail panel needs the outer scroll,
+// since its content has no internal scroll region of its own.
+.page__col--detail {
   overflow-y: auto;
 }
