@@ -110,13 +110,14 @@ function computeSkillGap() {
     skillRows.push({ skill: name, category, required, available, gap, gapPercentage });
   });
 
+  // Sorted by absolute gap, not gapPercentage - any zero-supply skill hits
+  // exactly 100% regardless of whether 15 or 15,000 people are needed, so
+  // ranking by percentage ties every fully-uncovered niche skill at the
+  // ceiling and buries genuinely bigger shortfalls (e.g. React short by 725
+  // people, at "only" 88%) underneath them.
   skillRows.sort((a, b) => b.gap - a.gap);
 
-  const topMissingSkills = skillRows
-    .filter(r => r.gap > 0)
-    .slice()
-    .sort((a, b) => b.gapPercentage - a.gapPercentage)
-    .slice(0, TOP_MISSING_SKILLS_LIMIT);
+  const topMissingSkills = skillRows.filter(r => r.gap > 0).slice(0, TOP_MISSING_SKILLS_LIMIT);
 
   const categoryDemand = new Map();
   demand.forEach((entry, lower) => {

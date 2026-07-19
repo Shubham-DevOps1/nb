@@ -35,13 +35,13 @@
 
     <app-card class="section">
       <h3 class="section__title">Top Missing Skills</h3>
-      <p class="section__subtitle">Ranked by gap as a share of current demand</p>
+      <p class="section__subtitle">Ranked by headcount shortfall (people needed but not available)</p>
       <div class="missing-skills">
         @for (row of data.topMissingSkills; track row.skill) {
           <div class="missing-skill-row">
             <span class="missing-skill-row__name">{{ row.skill }}</span>
-            <app-progress-bar [percent]="row.gapPercentage" />
-            <span class="missing-skill-row__value">{{ row.gapPercentage }}%</span>
+            <app-progress-bar [percent]="relativeGapBar(row.gap)" />
+            <span class="missing-skill-row__value">{{ row.gap }} short</span>
           </div>
         } @empty {
           <p class="empty-note">No skill gaps detected against current demand.</p>

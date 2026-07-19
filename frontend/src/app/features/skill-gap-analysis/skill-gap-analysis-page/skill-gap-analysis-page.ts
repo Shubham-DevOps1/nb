@@ -27,4 +27,17 @@ export class SkillGapAnalysisPage implements OnInit {
   protected severityClass(gapPercentage: number): 'danger' | 'success' {
     return gapPercentage > 0 ? 'danger' : 'success';
   }
+
+  /**
+   * Bar length relative to the largest gap in this list, not gapPercentage -
+   * the list is ranked by absolute gap (see skillGapAnalyzer.js), so the bar
+   * needs to scale with the same thing being ranked. Using gapPercentage
+   * here would make bars non-monotonic (a lower-ranked row could show a
+   * longer bar than the row above it, since a small, fully-uncovered skill
+   * hits 100% while a much bigger shortfall might only be 88%).
+   */
+  protected relativeGapBar(gap: number): number {
+    const maxGap = Math.max(...this.service.result()?.topMissingSkills.map(r => r.gap) ?? [1]);
+    return maxGap > 0 ? Math.round((gap / maxGap) * 100) : 0;
+  }
 }
