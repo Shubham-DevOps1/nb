@@ -34,8 +34,11 @@ function buildExtractionPrompt(documentText) {
     `and infer the technical resource requirements needed to build it.\n\n` +
     `Use ONLY skill names from this vocabulary (pick the closest matches - do not invent new skill names):\n${skillLines}\n\n` +
     `Use ONLY a domain name from this list if one clearly applies (omit domain if none fit):\n${domainLines}\n\n` +
-    `For each distinct type of resource needed, estimate a role title, the relevant skills (2-4 from the ` +
-    `vocabulary above), a minimum years of experience, and a headcount estimate - base the headcount and ` +
+    `For each distinct type of resource needed, estimate a role title, the relevant skills (3-8 from the ` +
+    `vocabulary above - list every skill genuinely implied by the document's functional AND non-functional ` +
+    `requirements for that role, not just the most obvious ones; e.g. a security requirement like encryption, ` +
+    `RBAC, or audit logging should surface a relevant security skill even if the role's core function is ` +
+    `something else), a minimum years of experience, and a headcount estimate - base the headcount and ` +
     `experience level on the apparent scope/complexity of the related requirements (e.g. non-functional ` +
     `requirements like scale, security, or uptime targets imply more senior/more resources).\n\n` +
     `For each skill, also judge how central it is to this specific role's requirements: "Must have" (the ` +
@@ -135,9 +138,11 @@ async function extractRequirements(documentText) {
   // reliability is the right call here.
   const generationConfig = {
     responseMimeType: 'application/json',
-    // Bumped from 2048 - skillDetails (importance/relevance per skill) and
-    // certifications roughly doubled the JSON size per requirement.
-    maxOutputTokens: 3072,
+    // Bumped from 3072 - raising the per-role skill cap from 2-4 to 3-8
+    // (every role was hitting the old cap's ceiling, cutting off skills a
+    // richer document genuinely implied) roughly doubles skillDetails
+    // entries per requirement again.
+    maxOutputTokens: 4096,
     thinkingConfig: { thinkingBudget: 0 }
   };
 
