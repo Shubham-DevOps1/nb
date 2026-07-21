@@ -59,6 +59,116 @@ jobs:
             --json \
             --output reports/semgrep.json .
 
+      - name: Install jq and wkhtmltopdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq wkhtmltopdf
+
+      - name: Generate HTML Report
+        run: |
+          cat <<'EOF' > report.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Semgrep Security Report</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 30px;
+                background: #f8f9fa;
+              }
+
+              h1 {
+                color: #0d6efd;
+                text-align: center;
+              }
+
+              h2 {
+                color: #333;
+                margin-top: 40px;
+              }
+
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+              }
+
+              th {
+                background: #0d6efd;
+                color: white;
+                padding: 10px;
+              }
+
+              td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                font-size: 13px;
+                vertical-align: top;
+              }
+
+              tr:nth-child(even){
+                background:#f2f2f2;
+              }
+
+              .summary{
+                background:white;
+                border:1px solid #ccc;
+                padding:15px;
+              }
+            </style>
+          </head>
+          <body>
+
+          <h1>Semgrep Security Scan Report</h1>
+
+          <div class="summary">
+          <p><b>Repository:</b> ${GITHUB_REPOSITORY}</p>
+          <p><b>Branch:</b> ${GITHUB_REF_NAME}</p>
+          <p><b>Commit:</b> ${GITHUB_SHA}</p>
+          <p><b>Generated:</b> $(date)</p>
+          </div>
+
+          <h2>Findings</h2>
+
+          <table>
+            <tr>
+              <th>Severity</th>
+              <th>Rule ID</th>
+              <th>File</th>
+              <th>Line</th>
+              <th>Message</th>
+            </tr>
+          EOF
+
+          jq -r '
+            .results[] |
+            "<tr><td>" +
+            (.extra.severity // "N/A") +
+            "</td><td>" +
+            .check_id +
+            "</td><td>" +
+            .path +
+            "</td><td>" +
+            (.start.line|tostring) +
+            "</td><td>" +
+            (.extra.message|gsub("\n";"<br>")) +
+            "</td></tr>"
+          ' reports/semgrep.json >> report.html
+
+          echo "</table></body></html>" >> report.html
+
+      - name: Convert HTML to PDF
+        run: |
+          wkhtmltopdf \
+            --page-size A4 \
+            --margin-top 15 \
+            --margin-bottom 15 \
+            --margin-left 10 \
+            --margin-right 10 \
+            report.html reports/Semgrep_Report.pdf
+
       - name: Upload SARIF to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -67,5 +177,9 @@ jobs:
       - name: Upload Reports
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
-          path: reports/
+          name: semgrep-reports
+          path: |
+            reports/semgrep.json
+            reports/semgrep.sarif
+            reports/Semgrep_Report.pdf
+            report.html
