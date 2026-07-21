@@ -29,20 +29,21 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install Semgrep
         run: |
           python -m pip install --upgrade pip
-          pip install semgrep
+          pip install --upgrade semgrep
+
+      - name: Semgrep Version
+        run: |
+          semgrep --version
 
       - name: Run Semgrep Scan
         run: |
           mkdir -p reports
 
           semgrep \
-            --config p/security-audit \
-            --config p/javascript \
-            --config p/typescript \
+            --config auto \
             --exclude node_modules \
             --exclude dist \
             --exclude coverage \
@@ -50,102 +51,124 @@ jobs:
             --output reports/semgrep.sarif .
 
           semgrep \
-            --config p/security-audit \
-            --config p/javascript \
-            --config p/typescript \
+            --config auto \
             --exclude node_modules \
             --exclude dist \
             --exclude coverage \
             --json \
             --output reports/semgrep.json .
 
+      - name: Show Scan Summary
+        run: |
+          echo "Total Findings:"
+          jq '.results | length' reports/semgrep.json
+
+          echo ""
+          echo "Semgrep Errors:"
+          jq '.errors' reports/semgrep.json
+
+          echo ""
+          echo "First 10 Findings:"
+          jq '.results[:10]' reports/semgrep.json
+
       - name: Install jq and wkhtmltopdf
         run: |
           sudo apt-get update
           sudo apt-get install -y jq wkhtmltopdf
 
-      - name: Generate HTML Report
+            - name: Generate HTML Report
         run: |
-          cat <<'EOF' > report.html
+          cat <<EOF > report.html
           <!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
             <title>Semgrep Security Report</title>
+
             <style>
-              body {
-                font-family: Arial, sans-serif;
-                margin: 30px;
-                background: #f8f9fa;
-              }
 
-              h1 {
-                color: #0d6efd;
-                text-align: center;
-              }
+            body{
+                font-family:Arial;
+                margin:40px;
+                background:#f5f5f5;
+            }
 
-              h2 {
-                color: #333;
-                margin-top: 40px;
-              }
+            h1{
+                color:#1565C0;
+                text-align:center;
+            }
 
-              table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-              }
+            table{
+                width:100%;
+                border-collapse:collapse;
+            }
 
-              th {
-                background: #0d6efd;
-                color: white;
-                padding: 10px;
-              }
+            th{
+                background:#1565C0;
+                color:white;
+                padding:10px;
+            }
 
-              td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                font-size: 13px;
-                vertical-align: top;
-              }
+            td{
+                border:1px solid #ccc;
+                padding:8px;
+            }
 
-              tr:nth-child(even){
-                background:#f2f2f2;
-              }
+            tr:nth-child(even){
+                background:#fafafa;
+            }
 
-              .summary{
+            .summary{
                 background:white;
                 border:1px solid #ccc;
                 padding:15px;
-              }
+                margin-bottom:30px;
+            }
+
             </style>
+
           </head>
+
           <body>
 
           <h1>Semgrep Security Scan Report</h1>
 
           <div class="summary">
-          <p><b>Repository:</b> ${GITHUB_REPOSITORY}</p>
-          <p><b>Branch:</b> ${GITHUB_REF_NAME}</p>
-          <p><b>Commit:</b> ${GITHUB_SHA}</p>
-          <p><b>Generated:</b> $(date)</p>
+
+          <b>Repository:</b> ${GITHUB_REPOSITORY}<br><br>
+
+          <b>Branch:</b> ${GITHUB_REF_NAME}<br><br>
+
+          <b>Commit:</b> ${GITHUB_SHA}<br><br>
+
+          <b>Generated:</b> $(date)<br><br>
+
+          <b>Total Findings:</b> $(jq '.results | length' reports/semgrep.json)
+
           </div>
 
-          <h2>Findings</h2>
-
           <table>
-            <tr>
-              <th>Severity</th>
-              <th>Rule ID</th>
-              <th>File</th>
-              <th>Line</th>
-              <th>Message</th>
-            </tr>
+
+          <tr>
+          <th>Severity</th>
+          <th>Rule</th>
+          <th>File</th>
+          <th>Line</th>
+          <th>Message</th>
+          </tr>
+
           EOF
 
-          jq -r '
+          if [ "$(jq '.results | length' reports/semgrep.json)" -eq 0 ]; then
+
+            echo "<tr><td colspan='5' style='text-align:center;'>No findings detected.</td></tr>" >> report.html
+
+          else
+
+            jq -r '
             .results[] |
             "<tr><td>" +
-            (.extra.severity // "N/A") +
+            (.extra.severity // "INFO") +
             "</td><td>" +
             .check_id +
             "</td><td>" +
@@ -155,10 +178,11 @@ jobs:
             "</td><td>" +
             (.extra.message|gsub("\n";"<br>")) +
             "</td></tr>"
-          ' reports/semgrep.json >> report.html
+            ' reports/semgrep.json >> report.html
+
+          fi
 
           echo "</table></body></html>" >> report.html
-
       - name: Convert HTML to PDF
         run: |
           wkhtmltopdf \
